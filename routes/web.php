@@ -11,6 +11,10 @@
 |
 */
 
+
+Route::get('/create', 'ActionsController@create')->middleware('admin');
+Route::post('/ideti', 'ActionsController@store')->middleware('admin');
+
 Route::get('/', function () {
     return view('welcome');
 });
@@ -27,3 +31,6 @@ Route::get('/test3', 'TestController@test3');
 
 Route::get('/test4', 'TestController@test4');
 Route::post('/upload_data', 'TestController@upload_data');
+
+
+

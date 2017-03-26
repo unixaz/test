@@ -6,6 +6,7 @@ use App\User;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\RegistersUsers;
+use Illuminate\Database\Eloquent\Model;
 
 class RegisterController extends Controller
 {
@@ -51,6 +52,7 @@ class RegisterController extends Controller
             'name' => 'required|max:255',
             'email' => 'required|email|max:255|unique:users',
             'password' => 'required|min:6|confirmed',
+            'role' => 'digits_between:0,1',
         ]);
     }
 
@@ -62,10 +64,18 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
+        $role = $data['role'];
+        $user = User::first();
+        if (empty($user))
+        {
+            $role = 2;
+        }
+
         return User::create([
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => bcrypt($data['password']),
+            'role' => $role,
         ]);
     }
 }
