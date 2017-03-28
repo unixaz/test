@@ -13,11 +13,50 @@
                 <!-- /input-group -->
             </li>
             <li>
-                <a href="{{ url('home') }}"><i class="fa fa-dashboard fa-fw"></i> Dashboard</a>
+                <a href="{{ url('/') }}"><i class="fa fa-dashboard fa-fw"></i> Pradžia</a>
             </li>
+            @if (Auth::user() && Auth::user()->isAdminOrProfessor())
             <li>
                 <a href="{{ url('create') }}"><i class="fa fa-dashboard fa-fw"></i> Registruoti renginį</a>
             </li>
+            @endif
+
+            @if (Auth::user() && Auth::user()->isAdminOrProfessor())
+                <li>
+                    <a href="{{ url('addVideo') }}"><i class="fa fa-dashboard fa-fw"></i> Pridėti video</a>
+                </li>
+            @endif
+
+            @if (Auth::user() &&  Auth::user()->role == 2 )
+                <li>
+                    <a href="{{ url('confirm') }}"><i class="fa fa-dashboard fa-fw"></i> Patvirtinti</a>
+                </li>
+            @endif
+            @if (Auth::user() &&  Auth::user()->role == 2 )
+                <li>
+                    <a href="{{ url('upload') }}"><i class="fa fa-dashboard fa-fw"></i> Ikelti video</a>
+                </li>
+            @endif
+
+            @if (Auth::user() &&  Auth::user()->role == 1 )
+                <li>
+                    <a href="{{ url('myVideos') }}"><i class="fa fa-dashboard fa-fw"></i> Mano ikelti video</a>
+                </li>
+            @endif
+            @if (Auth::user() &&  Auth::user()->role == 1 )
+                <li>
+                    <a href="#"><i class="fa fa-bar-chart-o fa-fw"></i> Grojaraščiai<span class="fa arrow"></span></a>
+                    <ul class="nav nav-second-level">
+                        <li>
+                            <a href="createPlaylist">Kurti grojaraštį</a>
+                        </li>
+                        <li>
+                            <a href="morris.html">Morris.js Charts</a>
+                        </li>
+                    </ul>
+                    <!-- /.nav-second-level -->
+                </li>
+            @endif
             <li>
                 <a href="#"><i class="fa fa-bar-chart-o fa-fw"></i> Charts<span class="fa arrow"></span></a>
                 <ul class="nav nav-second-level">

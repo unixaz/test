@@ -182,19 +182,7 @@ END;
 		
 	}
 	
-	public function test3()
-    {
 
-        return view('test3');
-
-    }
-	public function test4()
-    {
-		$video = Video::all();
-	
-        return view('test4', compact('video'));
-
-    }
 	
 	public function upload_data(Request $request)
     {

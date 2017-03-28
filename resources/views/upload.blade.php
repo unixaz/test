@@ -85,6 +85,14 @@
                                         </div>
                                             <hr>
                                         <div class="form-group">
+                                            <label for="title">Dėstytojas:</label>
+                                                <select id="role" class="form-control">
+                                                    @foreach($users as $user)
+                                                        <option value="{{ $user->id }}">{{ $user->name }}</option>
+                                                    @endforeach
+                                                </select>
+                                        </div>
+                                        <div class="form-group">
                                             <label for="title">Pavadinimas:</label>
                                             <input type="text" class="form-control" id="title" placeholder="Video pavadinimas">
                                         </div>
@@ -287,10 +295,13 @@
                     headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
                     type: "POST",
                     url: 'http://baka.enxas.eu/upload_data',
-                    data: {tags: document.getElementById("tags").value,
-					title: document.getElementById("title").value,
-					description: document.getElementById("description").value,
-					video_id: this.videoId},
+                    data: {
+                        tags: document.getElementById("tags").value,
+					    title: document.getElementById("title").value,
+					    description: document.getElementById("description").value,
+					    video_id: this.videoId,
+                        user_id: document.getElementById("role").value
+                    },
                     dataType: 'JSON',
                     success: function( msg ) {
                         console.log('pavyko');

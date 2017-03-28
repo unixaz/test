@@ -12,25 +12,29 @@
 */
 
 
-Route::get('/create', 'ActionsController@create')->middleware('admin');
-Route::post('/ideti', 'ActionsController@store')->middleware('admin');
+Route::get('/create', 'ActionsController@create')->middleware('admin_professor');
+Route::get('/addVideo', 'ActionsController@addVideo')->middleware('admin_professor');
+Route::post('/addVideo', 'ActionsController@storeVideo')->middleware('admin_professor');
+Route::get('/myVideos', 'ActionsController@myVideos')->middleware('admin_professor');
+Route::get('/createPlaylist', 'ActionsController@createPlaylist')->middleware('admin_professor');
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::post('/ideti', 'ActionsController@store')->middleware('admin');
+Route::get('/confirm', 'ActionsController@confirm')->middleware('admin');
+Route::get('/confirm2/{action}/{id}', 'ActionsController@confirm2')->middleware('admin');
+Route::get('/upload', 'ActionsController@upload')->middleware('admin');
+Route::post('/upload_data', 'ActionsController@upload_data')->middleware('admin');
 
 Auth::routes();
 
-Route::get('/home', 'HomeController@index');
+Route::get('/', 'HomeController@index');
 
 Route::post('/test', 'TestController@test');
 
 Route::get('/test2', 'TestController@test2');
 
-Route::get('/test3', 'TestController@test3');
 
 Route::get('/test4', 'TestController@test4');
-Route::post('/upload_data', 'TestController@upload_data');
+
 
 
 

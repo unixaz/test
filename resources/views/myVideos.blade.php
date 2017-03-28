@@ -8,9 +8,9 @@
                 <div class="panel-heading">Dashboard</div>
 
                 <div class="panel-body">
-                    @foreach ($video as $videos)
+                    @foreach ($videos as $video)
 						<iframe width="420" height="315"
-							src="https://www.youtube.com/embed/{{ $videos['video_id'] }}">
+							src="https://www.youtube.com/embed/{{ $video['video_id'] }}">
 						</iframe>
 					@endforeach
                 </div>
