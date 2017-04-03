@@ -59,7 +59,8 @@
                 <div class="collapse navbar-collapse" id="app-navbar-collapse">
                     <!-- Left Side Of Navbar -->
                     <ul class="nav navbar-nav">
-                        &nbsp;
+                        &nbsp;<li><a href="{{ url('videoList') }}">Video</a></li>
+                        <li><a href="{{ url('playlistList') }}">Grojaraščiai</a></li>
                     </ul>
 
                     <!-- Right Side Of Navbar -->

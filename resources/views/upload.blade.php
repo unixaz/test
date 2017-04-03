@@ -87,6 +87,7 @@
                                         <div class="form-group">
                                             <label for="title">Dėstytojas:</label>
                                                 <select id="role" class="form-control">
+                                                    <option value="0">Numatytasis</option>
                                                     @foreach($users as $user)
                                                         <option value="{{ $user->id }}">{{ $user->name }}</option>
                                                     @endforeach

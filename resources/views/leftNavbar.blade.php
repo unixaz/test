@@ -51,7 +51,13 @@
                             <a href="createPlaylist">Kurti grojaraštį</a>
                         </li>
                         <li>
-                            <a href="morris.html">Morris.js Charts</a>
+                            <a href="assignPlaylist">Priskirti grojaraščiui</a>
+                        </li>
+                        <li>
+                            <a href="deletePlaylist">Trinti grojaraštį</a>
+                        </li>
+                        <li>
+                            <a href="sortPlaylist">Perdelioti grijarašti</a>
                         </li>
                     </ul>
                     <!-- /.nav-second-level -->

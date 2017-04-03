@@ -13,11 +13,17 @@ class Video extends Model
      * @var array
      */
     protected $fillable = [
-        'title', 'description', 'video_id', 'user_id',
+        'title', 'description', 'video_id', 'user_id', 'playlist_id',
     ];
 
     public function tags()
     {
         return $this->belongsToMany('App\Tag');
     }
+
+    public function playlist()
+    {
+        return $this->hasMany('App\Playlist', 'id', 'playlist_id');
+    }
+
 }

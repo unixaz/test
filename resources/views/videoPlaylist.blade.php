@@ -16,16 +16,25 @@
             <div class="row">
                 <div class="col-lg-10">
 
-                    {!! Form::open(['url' => '/createPlaylist', 'class' => 'form-horizontal']) !!}
+                    {!! Form::open(['url' => '/assignPlaylist', 'class' => 'form-horizontal']) !!}
 
-                    {{ ($errors->has('title')) ? $errors->first('title') : '' }}
-                    <div class="form-group">
-                        {!! Form::label('Pavadinimas') !!}
-                        {!! Form::text('title', null,
-                        array('required',
-                        'class'=>'form-control',
-                        'placeholder'=>'Pavadinimas')) !!}
+                    <div class="form-group{{ $errors->has('playlist') ? ' has-error' : '' }}">
+                        <label for="playlist" class="col-md-4 control-label">Pareigos</label>
+                        <div class="col-md-6">
+                            <select name="playlist" class="form-control">
+                                <option value="0">Numatytasis</option>
+                                @foreach ($playlists as $playlist)
+                                    <option value="{{ $playlist->id }}">{{ $playlist->title }}</option>
+                                @endforeach
+                            </select>
+                            @if ($errors->has('playlist'))
+                                <span class="help-block">
+                                        <strong>{{ $errors->first('playlist') }}</strong>
+                                    </span>
+                            @endif
+                        </div>
                     </div>
+
                     <div class="panel-body">
                     <table class="table table-hover">
                         <thead>
@@ -49,15 +58,6 @@
                     </table>
                     </div>
 
-                    {{ ($errors->has('description')) ? $errors->first('description') : '' }}
-                    <div class="form-group">
-                        {!! Form::label('Aprašymas') !!}
-                        {!! Form::textarea('description', null,
-                        array('required',
-                        'class'=>'form-control',
-                        'rows' => 3,
-                        'placeholder'=>'Skelbimo aprašymas')) !!}
-                    </div>
 
                     <div class="form-group">
                         {!! Form::submit('Kurti Skelbimą',

@@ -2,13 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Comment;
 use App\Info;
 use App\Tag;
 use App\User;
 use App\Video;
+use App\Playlist;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Redirect;
 
 class ActionsController extends Controller
 {
@@ -83,7 +86,8 @@ class ActionsController extends Controller
             'title' => $request->get('title'),
             'description'  => $request->get('description'),
             'video_id'  => $values,
-            'user_id'  => Auth::id()
+            'user_id'  => Auth::id(),
+            'playlist_id'  => 0
         ]);
 
         if($video)
@@ -159,18 +163,128 @@ class ActionsController extends Controller
         }
     }
 
-    public function myVideos()
-    {
-        $videos = Video::where('user_id', Auth::id())->get();
-
-        return view('myVideos', compact('videos'));
-
-    }
-
     public function createPlaylist()
     {
-        $videos = Video::where('user_id', Auth::id())->get();
+        $videos = Video::with('playlist')->where('user_id', Auth::id())->get();
 
         return view('createPlaylist', compact('videos'));
     }
+
+    public function storePlaylist(Request $request)
+    {
+        $playlist = new Playlist;
+
+        $playlist->user_id = Auth::id();
+        $playlist->title = $request['title'];
+        $playlist->description = $request['description'];
+        $playlist->save();
+
+foreach ($request['ch'] as $selectedVideo) {
+    Video::where('user_id', Auth::id())
+        ->where('id', $selectedVideo)
+        ->update(['playlist_id' => $playlist->id]);
+}
+
+        return redirect('/');
+
+    }
+
+    public function assignPlaylist()
+    {
+        $videos = Video::with('playlist')->where('user_id', Auth::id())->get();
+        $playlists = Playlist::where('user_id', Auth::id())
+            ->get();
+        return view('assignPlaylist', compact('videos', 'playlists'));
+
+    }
+
+    public function storeAssignPlaylist(Request $request)
+    {
+        foreach ($request['ch'] as $selectedVideo) {
+            Video::where('user_id', Auth::id())
+                ->where('id', $selectedVideo)
+                ->update(['playlist_id' => $request->playlist]);
+        }
+
+        return redirect('/assignPlaylist');
+
+    }
+
+    public function deletePlaylist()
+    {
+
+        $playlists = Playlist::where('user_id', Auth::id())
+            ->get();
+        return view('deletePlaylist', compact('playlists'));
+
+    }
+
+    public function storeDeletePlaylist(Request $request)
+    {
+        if ($request->playlist != 0) {
+            $videos = Video::where('user_id', Auth::id())
+                ->where('playlist_id', $request->playlist)
+                ->get();
+            foreach ($videos as $video) {
+                $video->update(['playlist_id' => 0]);
+            }
+
+            Playlist::destroy($request->playlist);
+        }
+        return redirect('/deletePlaylist');
+
+    }
+
+    public function videoList()
+    {
+        $videos = Video::all();
+
+        return view('videoList', compact('videos'));
+
+    }
+
+    public function playlistList()
+    {
+        $playlists = Playlist::all();
+        $videos = array();
+        foreach ($playlists as $playlist) {
+            $videos[] = Video::where('playlist_id', $playlist->id)
+                ->count();
+        }
+
+        return view('playlistList', compact('playlists','videos'));
+
+    }
+
+    public function watchVideo($id)
+    {
+        $comments = Comment::with('users')->where('video_id', $id)->get();
+        $videos = Video::findOrFail($id);
+
+        return view('watchVideo', compact('videos','comments'));
+
+    }
+
+    public function addComment($id, Request $request)
+    {
+        $comments = new Comment;
+
+        $comments->user_id = Auth::id();
+        $comments->comment = $request['comment'];
+        $comments->video_id = $id;
+        $comments->save();
+
+        return Redirect::back();
+
+    }
+
+    public function videoPlaylist($id)
+    {
+
+        $videos = Video::where('playlist_id', $id)
+            ->get();
+        return view('videoList', compact('videos'));
+
+    }
+
 }
