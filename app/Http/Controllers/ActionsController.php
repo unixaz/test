@@ -120,6 +120,13 @@ class ActionsController extends Controller
         return $ytdata->items[0]->snippet->title . " " . $ytdata->items[0]->snippet->description;*/
     }
 
+    public function myVideos()
+    {
+        $videos = Video::where('user_id',Auth::id())
+            ->get();
+        return view('videoList', compact('videos'));
+    }
+
     public function upload()
     {
         $users = User::where('confirmed',true)

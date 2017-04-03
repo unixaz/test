@@ -11,6 +11,7 @@
 |
 */
 
+Route::get('/myVideos', 'ActionsController@myVideos')->middleware('admin_professor');
 
 Route::get('/create', 'ActionsController@create')->middleware('admin_professor');
 Route::get('/addVideo', 'ActionsController@addVideo')->middleware('admin_professor');
