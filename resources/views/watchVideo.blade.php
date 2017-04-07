@@ -2,7 +2,9 @@
 
 @section('content')
 
+    <div id="wrapper">
 
+        @include('leftNavbar')
                     {{--<div class="vid-container">
                         <iframe id="vid_frame" src="http://www.youtube.com/embed/eg6kNoJmzkY?rel=0&showinfo=0&autohide=1" width="560" height="315" frameborder="0"></iframe>
                     </div>
@@ -80,7 +82,7 @@
 
 
 
-
+    </div>
 
 
                         {{--<iframe width="560" height="315" src="https://www.youtube.com/embed/{{ $video['video_id'] }}" frameborder="0" allowfullscreen></iframe>--}}

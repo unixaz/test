@@ -295,7 +295,7 @@
                 $.ajax({
                     headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
                     type: "POST",
-                    url: 'http://baka.enxas.eu/upload_data',
+                    url: 'upload_data',
                     data: {
                         tags: document.getElementById("tags").value,
 					    title: document.getElementById("title").value,

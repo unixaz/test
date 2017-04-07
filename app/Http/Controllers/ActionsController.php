@@ -147,7 +147,8 @@ class ActionsController extends Controller
             'description'  => $request->get('description'),
             'video_id'  => $request->get('video_id'),
             'user_id'  => $request->get('user_id'),
-            'playlist_id'  => 0
+            'playlist_id'  => 0,
+            'order_in_playlist' => 0
         ]);
 
         if($video)
@@ -290,7 +291,47 @@ foreach ($request['ch'] as $selectedVideo) {
 
         $videos = Video::where('playlist_id', $id)
             ->get();
+        $videos = $videos->sortBy('id')
+            ->sortBy('order_in_playlist');
+
+        $videosIdDaugiauUz0 = $videos->filter(function ($value, $key) {
+            return $value->order_in_playlist > 0;
+        });
+
+        $videosId0 = $videos->filter(function ($value, $key) {
+            return $value->order_in_playlist == 0;
+        });
+
+        $videos = $videosIdDaugiauUz0->merge($videosId0);
+
+
+
         return view('videoList', compact('videos'));
+
+    }
+
+    public function sortPlaylist()
+    {
+
+$playlist_id = 6;
+        $videos = Video::where('playlist_id', $playlist_id)
+            ->get();
+
+        $videos = $videos->sortBy('id')
+        ->sortBy('order_in_playlist');
+
+        return view('sortPlaylist', compact('videos', 'playlist_id'));
+
+    }
+    public function sortPlaylist2(Request $request)
+    {
+
+foreach ($request->rearranged_list as $key=>$videoIdList)
+{
+    Video::where('id', $videoIdList)
+        ->update(['order_in_playlist' => $key+1]);
+}
+
 
     }
 

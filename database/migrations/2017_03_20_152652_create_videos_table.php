@@ -20,6 +20,7 @@ class CreateVideosTable extends Migration
 			$table->string('video_id');
             $table->integer('user_id');
             $table->integer('playlist_id');
+            $table->integer('order_in_playlist');
             $table->timestamps();
         });
     }

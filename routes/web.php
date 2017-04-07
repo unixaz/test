@@ -28,7 +28,7 @@ Route::post('/deletePlaylist', 'ActionsController@storeDeletePlaylist')->middlew
 
 Route::get('/videoPlaylist/{id}', 'ActionsController@videoPlaylist')->middleware('admin_professor');
 
-Route::post('/ideti', 'ActionsController@store')->middleware('admin');
+Route::post('/ideti', 'ActionsController@store')->middleware('admin_professor');
 Route::get('/confirm', 'ActionsController@confirm')->middleware('admin');
 Route::get('/confirm2/{action}/{id}', 'ActionsController@confirm2')->middleware('admin');
 Route::get('/upload', 'ActionsController@upload')->middleware('admin');
@@ -38,6 +38,9 @@ Route::get('/videoList', 'ActionsController@videoList');
 Route::get('/playlistList', 'ActionsController@playlistList');
 Route::get('/watch/{id}', 'ActionsController@watchVideo');
 Route::post('/addComment/{id}', 'ActionsController@addComment');
+
+Route::get('/sortPlaylist', 'ActionsController@sortPlaylist');
+Route::post('/sortPlaylist2', 'ActionsController@sortPlaylist2');
 
 Auth::routes();
 
