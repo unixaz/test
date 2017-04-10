@@ -21,7 +21,7 @@
                                         {!! $video['title'] !!}
                                     </div>
                                 </div>
-                              {{--  <li data-id="{!! $video['id'] !!}" class="ui-state-default">{!! $video['title'] !!}</li>--}}
+
                         @endforeach
                         </ul>
                         <div class="form-group">

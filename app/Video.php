@@ -13,7 +13,7 @@ class Video extends Model
      * @var array
      */
     protected $fillable = [
-        'title', 'description', 'video_id', 'user_id', 'playlist_id', 'order_in_playlist',
+        'title', 'description', 'video_id', 'user_id', 'playlist_id', 'order_in_playlist', 'privacy',
     ];
 
     public function tags()
@@ -24,6 +24,16 @@ class Video extends Model
     public function playlist()
     {
         return $this->hasMany('App\Playlist', 'id', 'playlist_id');
+    }
+
+    public function permissions()
+    {
+        return $this->hasMany('App\Permission', 'video_id', 'id');
+    }
+
+    public function users()
+    {
+        return $this->hasMany('App\User', 'id', 'user_id');
     }
 
 }

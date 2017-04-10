@@ -2,64 +2,50 @@
 
 @section('content')
 
-    <div id="wrapper">
+<style>
+    .your-centered-div {
+        width: 560px; /* you have to have a size or this method doesn't work */
+        height: 315px; /* think about making these max-width instead - might give you some more responsiveness */
 
-        @include('leftNavbar')
-                    {{--<div class="vid-container">
-                        <iframe id="vid_frame" src="http://www.youtube.com/embed/eg6kNoJmzkY?rel=0&showinfo=0&autohide=1" width="560" height="315" frameborder="0"></iframe>
-                    </div>
+        position: absolute; /* positions out of the flow, but according to the nearest parent */
+        top: 0; right: 0; /* confuse it i guess */
+        bottom: 0; left: 0;
+        margin: auto; /* make em equal */
+    }
+    </style>
+    <div class="container-fluid">
+        <div class="row row-offcanvas row-offcanvas-left">
 
+            @include('leftNavbar')
 
-                    <div class="vid-list-container">
-                        <div class="vid-list">
-                            <div class="vid-item" onClick="document.getElementById('vid_frame').src='http://youtube.com/embed/eg6kNoJmzkY?autoplay=1&rel=0&showinfo=0&autohide=1'">
-                                <div class="thumb">
-                                    <img src="http://img.youtube.com/vi/eg6kNoJmzkY/1.jpg" alt="" />
-                                </div>
-                                <div class="desc">
-                                    Jessica Hernandez & the Deltas - Dead Brains
-                                </div>
-                            </div>
-                        </div>
-                    </div>--}}
+            <div class="col-xs-12 col-sm-9">
 
-                    <div class="container">
-                        <h2>Image Gallery</h2>
-                        <p>The .thumbnail class can be used to display an image gallery.</p>
-                        <p>The .caption class adds proper padding and a dark grey color to text inside thumbnails.</p>
-                        <p>Click on the images to enlarge them.</p>
-                        <div class="row">
+                <div class="panel panel-default">
+                    <div class="panel-heading"><b>Video</b></div>
+                    <div class="panel-body">
+                        <iframe class="center-block" width="45%" height="315" src="https://www.youtube.com/embed/{{ $videos['video_id'] }}" frameborder="0" allowfullscreen=""></iframe>
 
-                            <iframe id="ytplayer" type="text/html" width="640" height="360"
-                                    src="https://www.youtube.com/embed/{{ $videos['video_id'] }}?autoplay=0"
-                                    frameborder="0" allowfullscreen></iframe>
+                        <hr>
 
 
-
-                        </div>
-
-                        <div class="row">
                         {!! Form::open(['url' => '/addComment/' . $videos['id'], 'class' => 'form-horizontal']) !!}
 
                         {{ ($errors->has('comment')) ? $errors->first('comment') : '' }}
                         <div class="form-group">
-                            {!! Form::label('Aprašymas') !!}
-                            {!! Form::textarea('comment', null,
-                            array('required',
-                            'class'=>'form-control',
-                            'rows' => 3,
-                            'placeholder'=>'Skelbimo aprašymas')) !!}
-                        </div>
-
-                        <div class="form-group">
-                            {!! Form::submit('Kurti Skelbimą',
-                              array('class'=>'btn btn-primary')) !!}
+                            <label for="comment" class="col-lg-1 control-label">Komentaras</label>
+                            <div class="col-lg-9">
+                                <textarea class="form-control" name="comment" id="input" rows="3"></textarea>
+                                <span class="help-block">Šiame lauke galite rašyti naujieną.</span>
+                            </div>
+                            <div class="col-lg-1">
+                                <button type="submit" class="btn btn-primary">Kurti naujieną</button>
+                            </div>
                         </div>
 
                         {!! Form::close()  !!}
-                        </div>
 
-                        <div class="row">
+
+
 
                         @foreach($comments as $comment)
 
@@ -76,17 +62,10 @@
                                 </a>
 
                         @endforeach
-                        </div>
 
                     </div>
-
-
-
+                </div>
+            </div>
+        </div>
     </div>
-
-
-                        {{--<iframe width="560" height="315" src="https://www.youtube.com/embed/{{ $video['video_id'] }}" frameborder="0" allowfullscreen></iframe>--}}
-
-
-
 @endsection

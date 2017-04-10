@@ -2,71 +2,76 @@
 
 @section('content')
 
-    <div id="wrapper">
+    <div class="container-fluid">
+        <div class="row row-offcanvas row-offcanvas-left">
 
-    @include('leftNavbar')
+            @include('leftNavbar')
 
-        <div id="page-wrapper">
-            <div class="row">
-                <div class="col-lg-12">
-                    <h1 class="page-header">Grojaraščio kūrimas</h1>
-                </div>
-                <!-- /.col-lg-12 -->
-            </div>
-            <div class="row">
-                <div class="col-lg-10">
+            <div class="col-xs-12 col-sm-9">
+
+                <div class="panel panel-default">
+                    <div class="panel-heading"><b>Naujienos</b></div>
+                    <div class="panel-body">
 
                     {!! Form::open(['url' => '/createPlaylist', 'class' => 'form-horizontal']) !!}
 
-                    {{ ($errors->has('title')) ? $errors->first('title') : '' }}
-                    <div class="form-group">
-                        {!! Form::label('Pavadinimas') !!}
-                        {!! Form::text('title', null,
-                        array('required',
-                        'class'=>'form-control',
-                        'placeholder'=>'Pavadinimas')) !!}
-                    </div>
-                    <div class="panel-body">
-                    <table class="table table-hover">
-                        <thead>
-                        <tr>
-                            <th>Pavadinimas</th>
-                            <th>Grojaraštis</th>
-                        </tr>
-                        </thead>
-                        <tbody>
+                        <fieldset>
 
-                        @foreach ($videos as $video)
-                            <tr>
-                                <td> {!! Form::checkbox('ch[]', $video['id'], false) !!} {!! Form::label($video['title']) !!}</td>
-                                @foreach ($video->playlist as $playlist)
-                                    <td> {!! $playlist->title !!} </td>
-                                @endforeach
-                            <br>
-                                {{--$video['playlist_id']--}}
-                        @endforeach
-                        </tbody>
-                    </table>
-                    </div>
+                            {{ ($errors->has('title')) ? $errors->first('title') : '' }}
+                            <div class="form-group">
+                                <label for="title" class="col-lg-2 control-label">Pavadinimas</label>
+                                <div class="col-lg-10">
+                                    <input type="text" class="form-control" name="title">
+                                </div>
+                            </div>
 
-                    {{ ($errors->has('description')) ? $errors->first('description') : '' }}
-                    <div class="form-group">
-                        {!! Form::label('Aprašymas') !!}
-                        {!! Form::textarea('description', null,
-                        array('required',
-                        'class'=>'form-control',
-                        'rows' => 3,
-                        'placeholder'=>'Skelbimo aprašymas')) !!}
-                    </div>
+                            <div class="form-group">
+                                <label for="title" class="col-lg-2 control-label">Jūsų video</label>
+                                <div class="col-lg-10">
+                                    <table class="table table-bordered">
+                                        <thead>
+                                        <tr>
+                                            <th>Pavadinimas</th>
+                                            <th>Grojaraštis</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach ($videos as $video)
+                                                <tr>
+                                                    <td> {!! Form::checkbox('ch[]', $video['id'], false) !!} {!! Form::label($video['title']) !!}</td>
+                                                    @foreach ($video->playlist as $playlist)
+                                                        <td> {!! $playlist->title !!} </td>
+                                                    @endforeach
+                                                </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
 
-                    <div class="form-group">
-                        {!! Form::submit('Kurti Skelbimą',
-                          array('class'=>'btn btn-primary')) !!}
-                    </div>
+                            {{ ($errors->has('description')) ? $errors->first('description') : '' }}
+                            <div class="form-group">
+                                <label for="content" class="col-lg-2 control-label">Aprašymas</label>
+                                <div class="col-lg-10">
+                                    <textarea class="form-control" name="description" id="input" rows="5"></textarea>
+                                    <span class="help-block">Šiame lauke galite rašyti naujieną.</span>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="col-lg-10 col-lg-offset-2">
+                                    <button type="reset" class="btn btn-default">Išvalyti formą</button>
+                                    <button type="submit" class="btn btn-primary">Kurti naujieną</button>
+                                </div>
+                            </div>
+
+                        </fieldset>
 
                     {!! Form::close()  !!}
 
+                    </div>
                 </div>
+
             </div>
         </div>
     </div>

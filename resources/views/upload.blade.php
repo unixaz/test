@@ -52,78 +52,85 @@
     }
 </style>
 
-
-
 @section('content')
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-9">
+
+    <div class="container-fluid">
+        <div class="row row-offcanvas row-offcanvas-left">
+
+            @include('leftNavbar')
+
+            <div class="col-xs-12 col-sm-9">
+
                 <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <i class="fa fa-bell fa-fw"></i> Video kėlimas
-                    </div>
+                    <div class="panel-heading"><b>Įkelti video</b></div>
                     <div class="panel-body">
 
                         <span id="signinButton" class="pre-sign-in">
                               <!-- IMPORTANT: Replace the value of the <code>data-clientid</code>
                                    attribute in the following tag with your project's client ID. -->
-                              <span
-                                      class="g-signin"
-                                      data-callback="signinCallback"
-                                      data-clientid="733664914176-av3k29o10v3d07n7dvr7bt4nic7mn3p3.apps.googleusercontent.com"
-                                      data-cookiepolicy="single_host_origin"
-                                      data-scope="https://www.googleapis.com/auth/youtube.upload https://www.googleapis.com/auth/youtube">
-                              </span>
+                            <span
+                                    class="g-signin"
+                                    data-callback="signinCallback"
+                                    data-clientid="733664914176-av3k29o10v3d07n7dvr7bt4nic7mn3p3.apps.googleusercontent.com"
+                                    data-cookiepolicy="single_host_origin"
+                                    data-scope="https://www.googleapis.com/auth/youtube.upload https://www.googleapis.com/auth/youtube">
                             </span>
+                        </span>
 
-                                    <div class="post-sign-in">
-                                        <div class="form-group">
-                                            <label for="channel-thumbnail">YouTube kanalas:</label><br>
-                                            <img id="channel-thumbnail">
-                                            <span id="channel-name"></span>
-                                        </div>
-                                            <hr>
-                                        <div class="form-group">
-                                            <label for="title">Dėstytojas:</label>
-                                                <select id="role" class="form-control">
-                                                    <option value="0">Numatytasis</option>
-                                                    @foreach($users as $user)
-                                                        <option value="{{ $user->id }}">{{ $user->name }}</option>
-                                                    @endforeach
-                                                </select>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="title">Pavadinimas:</label>
-                                            <input type="text" class="form-control" id="title" placeholder="Video pavadinimas">
-                                        </div>
-										<div class="form-group">
-                                            <label for="tags">Raktažodžiai:</label>
-                                            <input type="text" class="form-control" id="tags" placeholder="Video raktažodžiai">
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="description">Aprašymas:</label>
-                                            <textarea class="form-control" id="description" rows="3" placeholder="Video aprašymas"></textarea>
-                                        </div>
+                        <div class="post-sign-in">
+                            <div class="form-group">
+                                <label for="channel-thumbnail">YouTube kanalas:</label><br>
+                                <img id="channel-thumbnail">
+                                <span id="channel-name"></span>
+                            </div>
+                            <hr>
+                            <div class="form-group">
+                                <label for="title">Dėstytojas:</label>
+                                <select id="role" class="form-control">
+                                    @foreach($users as $user)
+                                        <option value="{{ $user->id }}">{{ $user->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="title">Pavadinimas:</label>
+                                <input type="text" class="form-control" id="title">
+                            </div>
+                            <div class="form-group">
+                                <label for="tags">Raktažodžiai:</label>
+                                <input type="text" class="form-control" id="tags">
+                            </div>
+                            <div class="form-group">
+                                <label for="description">Aprašymas:</label>
+                                <textarea class="form-control" id="description" rows="3"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="privacy-status">Privatumas:</label>
+                                <select id="privacy-status" class="form-control">
+                                    <option value="public">Viešas (public)</option>
+                                    <option value="unlisted">Privatus (unlisted)</option>
 
-                                        <div>
-                                            <label class="btn btn-default btn-file">
-                                                <input type="file" id="file" accept="video/*" hidden>
-                                            </label>
-                                            <button id="button" type="button" class="btn btn-primary">Įkelti video</button>
-                                            <div class="during-upload">
-                                                <p><span id="percent-transferred"></span>% įkelta (<span id="bytes-transferred"></span>/<span id="total-bytes"></span> baitų)</p>
-                                                <progress id="upload-progress" max="1" value="0"></progress>
-                                            </div>
+                                </select>
+                            </div>
 
-                                            <div class="post-upload">
-                                                <p>Įkeltas video kurio id <span id="video-id"></span>. Polling for status...</p>
-                                                <ul id="post-upload-status"></ul>
-                                                <div id="player"></div>
-                                            </div>
-                                            <p id="disclaimer">By uploading a video, you certify that you own all rights to the content or that you are authorized by the owner to make the content publicly available on YouTube, and that it otherwise complies with the YouTube Terms of Service located at <a href="http://www.youtube.com/t/terms" target="_blank">http://www.youtube.com/t/terms</a></p>
-                                        </div>
-                                    </div>
+                            <div>
+                                <label class="btn btn-default btn-file">
+                                    <input type="file" id="file" accept="video/*" hidden>
+                                </label>
+                                <button id="button" type="button" class="btn btn-primary">Įkelti video</button>
+                                <div class="during-upload">
+                                    <p><span id="percent-transferred"></span>% įkelta (<span id="bytes-transferred"></span>/<span id="total-bytes"></span> baitų)</p>
+                                    <progress id="upload-progress" max="1" value="0"></progress>
+                                </div>
+
+                                <div class="post-upload">
+                                    <p>Įkeltas video kurio id <b><span id="video-id"></span></b>. Laukiama statuso...</p>
+                                    <ul id="post-upload-status"></ul>
+                                    <div id="player"></div>
+                                </div>
+                                <p id="disclaimer">By uploading a video, you certify that you own all rights to the content or that you are authorized by the owner to make the content publicly available on YouTube, and that it otherwise complies with the YouTube Terms of Service located at <a href="http://www.youtube.com/t/terms" target="_blank">http://www.youtube.com/t/terms</a></p>
+                            </div>
+                        </div>
 
                     </div>
                 </div>
@@ -177,7 +184,7 @@
          * @type Array.<string>
          * @default ['google-cors-upload']
          */
-        this.tags = ['youtube-cors-upload'];
+
 
         /**
          * The numeric YouTube
@@ -187,7 +194,7 @@
          * @type number
          * @default 22
          */
-        this.categoryId = 22;
+        this.categoryId = 27;
 
         /**
          * The id of the new video.
@@ -237,13 +244,12 @@
         var metadata = {
             snippet: {
                 title: $('#title').val(),
-                description: $('#description').text(),
-                tags: this.tags,
+                description: document.getElementById("description").value,
+                tags: document.getElementById("tags").value.split(","),
                 categoryId: this.categoryId
             },
             status: {
-                // privacyStatus: $('#privacy-status option:selected').text()
-                privacyStatus: 'public'
+                privacyStatus: document.getElementById("privacy-status").value
             }
         };
         var uploader = new MediaUploader({
@@ -298,10 +304,11 @@
                     url: 'upload_data',
                     data: {
                         tags: document.getElementById("tags").value,
-					    title: document.getElementById("title").value,
-					    description: document.getElementById("description").value,
-					    video_id: this.videoId,
-                        user_id: document.getElementById("role").value
+                        title: document.getElementById("title").value,
+                        description: document.getElementById("description").value,
+                        video_id: this.videoId,
+                        user_id: document.getElementById("role").value,
+                        privacy: document.getElementById("privacy-status").value
                     },
                     dataType: 'JSON',
                     success: function( msg ) {
@@ -337,7 +344,7 @@
                     switch (uploadStatus) {
                         // This is a non-final status, so we need to poll again.
                         case 'uploaded':
-                            $('#post-upload-status').append('<li>Upload status: ' + uploadStatus + '</li>');
+                            $('#post-upload-status').append('<li>Įkėlimo statusas: ' + uploadStatus + '</li>');
                             setTimeout(this.pollForVideoStatus.bind(this), STATUS_POLLING_INTERVAL_MILLIS);
                             break;
                         // The video was successfully transcoded and is available.

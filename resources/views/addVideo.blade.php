@@ -10,10 +10,24 @@
             <div class="col-xs-12 col-sm-9">
 
                 <div class="panel panel-default">
-                    <div class="panel-heading"><b>Video pridėjimas</b></div>
+                    <div class="panel-heading"><b>Pridėti video</b></div>
                     <div class="panel-body">
 
+                        @include('flash::message')
+                        @include('errors')
+
                     {!! Form::open(['url' => '/addVideo', 'class' => 'form-horizontal']) !!}
+
+                        <div class="form-group">
+                            <label for="professor" class="col-lg-2 control-label">Naujas savininkas</label>
+                            <div class="col-lg-10">
+                                <select name="professor" class="form-control">
+                                    @foreach ($users as $user)
+                                        <option value="{{ $user->id }}">{{ $user->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
 
                         {{ ($errors->has('link')) ? $errors->first('link') : '' }}
                         <div class="form-group">

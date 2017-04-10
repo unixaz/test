@@ -11,11 +11,39 @@
 |
 */
 
-Route::get('/myVideos', 'ActionsController@myVideos')->middleware('admin_professor');
+Auth::routes();
 
-Route::get('/create', 'ActionsController@create')->middleware('admin_professor');
-Route::get('/addVideo', 'ActionsController@addVideo')->middleware('admin_professor');
-Route::post('/addVideo', 'ActionsController@storeVideo')->middleware('admin_professor');
+Route::group(['middleware' => ['admin']], function () {
+    Route::get('/confirmUser', 'ActionsController@confirmUser');
+    Route::get('/confirmUser2/{action}/{id}', 'ActionsController@confirmUser2');
+
+    Route::get('/changeOwner', 'ActionsController@changeOwner');
+    Route::post('/changeOwner', 'ActionsController@changeOwner2');
+
+    Route::get('/deleteVideo', 'ActionsController@deleteVideo');
+    Route::post('/deleteVideo', 'ActionsController@deleteVideo2');
+
+    Route::get('/upload', 'ActionsController@upload');
+    Route::post('/upload_data', 'ActionsController@upload_data');
+
+    Route::get('/writeNews', 'ActionsController@writeNews');
+    Route::post('/writeNews', 'ActionsController@writeNews2');
+
+    Route::get('/addVideo', 'ActionsController@addVideo');
+    Route::post('/addVideo', 'ActionsController@addVideo2');
+});
+
+Route::group(['middleware' => ['admin_professor']], function () {
+    Route::get('/changePrivacy', 'ActionsController@changePrivacy');
+    Route::post('/changePrivacy', 'ActionsController@changePrivacy2');
+
+    Route::get('/videoPermissions', 'ActionsController@videoPermissions');
+    Route::get('/videoPermissions2/{id}', 'ActionsController@videoPermissions2');
+    Route::post('/videoPermissions3/{id}', 'ActionsController@videoPermissions3');
+
+});
+
+Route::get('/myVideos', 'ActionsController@myVideos')->middleware('admin_professor');
 
 Route::get('/createPlaylist', 'ActionsController@createPlaylist')->middleware('admin_professor');
 Route::post('/createPlaylist', 'ActionsController@storePlaylist')->middleware('admin_professor');
@@ -26,13 +54,8 @@ Route::post('/assignPlaylist', 'ActionsController@storeAssignPlaylist')->middlew
 Route::get('/deletePlaylist', 'ActionsController@deletePlaylist')->middleware('admin_professor');
 Route::post('/deletePlaylist', 'ActionsController@storeDeletePlaylist')->middleware('admin_professor');
 
-Route::get('/videoPlaylist/{id}', 'ActionsController@videoPlaylist')->middleware('admin_professor');
+Route::get('/videoPlaylist/{id}', 'ActionsController@videoPlaylist');
 
-Route::post('/ideti', 'ActionsController@store')->middleware('admin_professor');
-Route::get('/confirm', 'ActionsController@confirm')->middleware('admin');
-Route::get('/confirm2/{action}/{id}', 'ActionsController@confirm2')->middleware('admin');
-Route::get('/upload', 'ActionsController@upload')->middleware('admin');
-Route::post('/upload_data', 'ActionsController@upload_data')->middleware('admin');
 
 Route::get('/videoList', 'ActionsController@videoList');
 Route::get('/playlistList', 'ActionsController@playlistList');
@@ -42,7 +65,6 @@ Route::post('/addComment/{id}', 'ActionsController@addComment');
 Route::get('/sortPlaylist', 'ActionsController@sortPlaylist');
 Route::post('/sortPlaylist2', 'ActionsController@sortPlaylist2');
 
-Auth::routes();
 
 Route::get('/', 'HomeController@index');
 

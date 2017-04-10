@@ -10,33 +10,38 @@
             <div class="col-xs-12 col-sm-9">
 
                 <div class="panel panel-default">
-                    <div class="panel-heading"><b>Naujienos</b></div>
+                    <div class="panel-heading"><b>Skelbti naujieną</b></div>
                     <div class="panel-body">
 
-                        {!! Form::open(['url' => '/ideti', 'class' => 'form-horizontal']) !!}
+                        @include('flash::message')
+                        @include('errors')
+
+                        {!! Form::open(['url' => '/writeNews', 'class' => 'form-horizontal']) !!}
                         <fieldset>
 
                             {{ ($errors->has('title')) ? $errors->first('title') : '' }}
                             <div class="form-group">
                                 <label for="title" class="col-lg-2 control-label">Antraštė</label>
                                 <div class="col-lg-10">
-                                    <input type="text" class="form-control" name="title">
+                                    <input type="text" class="form-control" name="title" required>
                                 </div>
                             </div>
 
-                            {{ ($errors->has('content')) ? $errors->first('ccontent') : '' }}
+                            {{ ($errors->has('content')) ? $errors->first('content') : '' }}
                             <div class="form-group">
                                 <label for="content" class="col-lg-2 control-label">Naujiena</label>
                                 <div class="col-lg-10">
                                     <textarea class="form-control" name="content" id="input" rows="5"></textarea>
                                     <span class="help-block">Šiame lauke galite rašyti naujieną.</span>
+                                    <div id="character_count"></div>
                                 </div>
+
                             </div>
 
                             <div class="form-group">
                                 <div class="col-lg-10 col-lg-offset-2">
                                     <button type="reset" class="btn btn-default">Išvalyti formą</button>
-                                    <button type="submit" class="btn btn-primary">Kurti naujieną</button>
+                                    <button type="submit" class="btn btn-primary" onclick="return ValidateCharacterLength();">Skelbti naujieną</button>
                                 </div>
                             </div>
                             </fieldset>
@@ -65,10 +70,32 @@
             relative_urls: false,
             target_list: false,
             default_link_target: "_blank",
-            language: 'lt'
+            language: 'lt',
+            setup: function (ed) {
+                ed.on('keyup', function (e) {
+                    var count = CountCharacters();
+                    document.getElementById("character_count").innerHTML = count + "/500 simbolių";
+                });
+            }
         };
 
         tinymce.init(editor_config);
+
+        function CountCharacters() {
+            var content = tinymce.activeEditor.getContent().length;
+            return content;
+        };
+
+        function ValidateCharacterLength() {
+            var max = 500;
+            var count = CountCharacters();
+            if (count > max) {
+                alert("Leidžiama iki " + max + " simbolių.")
+                return false;
+            }
+
+        }
+
     </script>﻿
 @endsection
 

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Comment;
 use App\Info;
+use App\Permission;
 use App\Tag;
 use App\User;
 use App\Video;
@@ -15,13 +16,24 @@ use Illuminate\Support\Facades\Redirect;
 
 class ActionsController extends Controller
 {
-    public function create()
+    public function writeNews()
     {
-        return view('newsForm');
+        return view('writeNews');
     }
 
-    public function store(Request $request)
+    public function writeNews2(Request $request)
     {
+        $this->validate(
+            $request,
+            ['title' => 'required'],
+            ['title.required' => 'Nenurodyta antraštė']
+        );
+        $this->validate(
+            $request,
+            ['content' => 'required'],
+            ['content.required' => 'Nenurodyta naujiena']
+        );
+
         $info = new Info;
 
         $info->user_id = Auth::id();
@@ -32,12 +44,14 @@ class ActionsController extends Controller
         return redirect('/');
     }
 
-    public function confirm()
+    public function confirmUser()
     {
-        $users = User::where('confirmed',false)->get();
-        return view('confirm', compact('users'));
+        $users = User::where('confirmed', false)->get();
+
+        return view('confirmUser', compact('users'));
     }
-    public function confirm2($action, $id)
+
+    public function confirmUser2($action, $id)
     {
         $user = User::find($id);
 
@@ -50,16 +64,21 @@ class ActionsController extends Controller
             $user->delete();
         }
 
-        return redirect('confirm');
+        flash('Sėkmingai įvykdyta', 'success');
+        return redirect('/confirmUser');
     }
 
     public function addVideo()
     {
-        return view('addVideo');
+        $users = User::where('confirmed', true)
+            ->whereIn('role', [1,2])
+            ->get();
+
+        return view('addVideo',compact('users'));
     }
 
 
-    public function storeVideo(Request $request)
+    public function addVideo2(Request $request)
     {
 
         $url = $request->get('link');
@@ -76,18 +95,34 @@ class ActionsController extends Controller
         else if (preg_match('/youtube\.com\/verify_age\?next_url=\/watch%3Fv%3D([^\&\?\/]+)/', $url, $id)) {
             $values = $id[1];
         } else {
-        dd('prasta nuoroda');
+            flash('Prasta nuoroda', 'danger');
+            return redirect('/addVideo');
         }
 
-
-
+        $this->validate(
+            $request,
+            ['title' => 'required'],
+            ['title.required' => 'Nenurodytas pavadinimas']
+        );
+        $this->validate(
+            $request,
+            ['description' => 'required'],
+            ['description.required' => 'enurodytas aprašymas']
+        );
+        $this->validate(
+            $request,
+            ['tags' => 'required'],
+            ['tags.required' => 'Nenurodyti raktažodžiai']
+        );
 
         $video = Video::create([
             'title' => $request->get('title'),
             'description'  => $request->get('description'),
             'video_id'  => $values,
-            'user_id'  => Auth::id(),
-            'playlist_id'  => 0
+            'user_id'  => $request->get('professor'),
+            'playlist_id'  => 0,
+            'order_in_playlist' => 0,
+            'privacy' => 'public'
         ]);
 
         if($video)
@@ -96,9 +131,6 @@ class ActionsController extends Controller
             $tagIds = [];
             foreach($tagNames as $tagName)
             {
-                //$post->tags()->create(['name'=>$tagName]);
-                //Or to take care of avoiding duplication of Tag
-                //you could substitute the above line as
                 $tag = Tag::firstOrCreate(['name'=>$tagName]);
                 if($tag)
                 {
@@ -110,14 +142,6 @@ class ActionsController extends Controller
         }
         return redirect('/');
 
-
-        /*$videoid = 'Rcgnqa9LGe0';
-        $apikey = 'AIzaSyAJfEeIKCLOu7fwML4ido5uxpAv_aXtpFA';
-
-        $json = file_get_contents('https://www.googleapis.com/youtube/v3/videos?id='.$videoid.'&key='.$apikey.'&part=snippet');
-        $ytdata = json_decode($json);
-
-        return $ytdata->items[0]->snippet->title . " " . $ytdata->items[0]->snippet->description;*/
     }
 
     public function myVideos()
@@ -129,9 +153,10 @@ class ActionsController extends Controller
 
     public function upload()
     {
-        $users = User::where('confirmed',true)
-            ->where('role', 1)
+        $users = User::where('confirmed', true)
+            ->whereIn('role', [1,2])
             ->get();
+
         return view('upload', compact('users'));
     }
 
@@ -148,7 +173,8 @@ class ActionsController extends Controller
             'video_id'  => $request->get('video_id'),
             'user_id'  => $request->get('user_id'),
             'playlist_id'  => 0,
-            'order_in_playlist' => 0
+            'order_in_playlist' => 0,
+            'privacy'  => $request->get('privacy')
         ]);
 
         if($video)
@@ -245,7 +271,7 @@ foreach ($request['ch'] as $selectedVideo) {
 
     public function videoList()
     {
-        $videos = Video::all();
+        $videos = Video::with('permissions')->get();
 
         return view('videoList', compact('videos'));
 
@@ -266,21 +292,48 @@ foreach ($request['ch'] as $selectedVideo) {
 
     public function watchVideo($id)
     {
-        $comments = Comment::with('users')->where('video_id', $id)->get();
         $videos = Video::findOrFail($id);
+        $comments = Comment::with('users')->where('video_id', $id)->get();
+        if ($videos->privacy == 'public') {
 
-        return view('watchVideo', compact('videos','comments'));
+            return view('watchVideo', compact('videos', 'comments'));
+        }elseif ($videos->privacy == 'unlisted'){
+            $permission = Permission::where('user_id', Auth::id())
+            ->where('video_id', $id)->first();
+            if ($permission)
+            {
+                return view('watchVideo', compact('videos', 'comments'));
+            }else{
+                return redirect('/');
+            }
+        }
 
     }
 
     public function addComment($id, Request $request)
     {
-        $comments = new Comment;
+        $video = Video::findOrFail($id);
 
-        $comments->user_id = Auth::id();
-        $comments->comment = $request['comment'];
-        $comments->video_id = $id;
-        $comments->save();
+        if ($video->privacy == 'public') {
+            $comments = new Comment;
+
+            $comments->user_id = Auth::id();
+            $comments->comment = $request['comment'];
+            $comments->video_id = $id;
+            $comments->save();
+        }elseif ($video->privacy == 'unlisted'){
+            $permission = Permission::where('user_id', Auth::id())
+                ->where('video_id', $id)->first();
+            if ($permission)
+            {
+                $comments = new Comment;
+
+                $comments->user_id = Auth::id();
+                $comments->comment = $request['comment'];
+                $comments->video_id = $id;
+                $comments->save();
+            }
+        }
 
         return Redirect::back();
 
@@ -288,9 +341,9 @@ foreach ($request['ch'] as $selectedVideo) {
 
     public function videoPlaylist($id)
     {
+        $videos = Video::with('permissions')
+            ->where('playlist_id', $id)->get();
 
-        $videos = Video::where('playlist_id', $id)
-            ->get();
         $videos = $videos->sortBy('id')
             ->sortBy('order_in_playlist');
 
@@ -303,8 +356,6 @@ foreach ($request['ch'] as $selectedVideo) {
         });
 
         $videos = $videosIdDaugiauUz0->merge($videosId0);
-
-
 
         return view('videoList', compact('videos'));
 
@@ -333,6 +384,147 @@ foreach ($request->rearranged_list as $key=>$videoIdList)
 }
 
 
+    }
+
+    public function changeOwner()
+    {
+        $videos = Video::with('users')->get();
+
+        $professors = User::where('confirmed', true)
+            ->whereIn('role', [1,2])
+            ->get();
+        return view('changeOwner', compact('videos', 'professors'));
+    }
+
+    public function changeOwner2(Request $request)
+    {
+        $this->validate(
+            $request,
+            ['ch' => 'required'],
+            ['ch.required' => 'Nepasirinkti video']
+        );
+
+        foreach ($request['ch'] as $selectedVideo) {
+            Video::where('id', $selectedVideo)
+                ->update(['user_id' => $request->professor]);
+        }
+
+        flash('Sėkmingai įvykdyta', 'success');
+        return redirect('/changeOwner');
+
+    }
+
+    public function deleteVideo()
+    {
+        $videos = Video::with('users')->get();
+
+        return view('deleteVideo', compact('videos'));
+
+    }
+
+    public function deleteVideo2(Request $request)
+    {
+        $this->validate(
+            $request,
+            ['ch' => 'required'],
+            ['ch.required' => 'Nepasirinkti video']
+        );
+
+        Video::destroy($request['ch']);
+
+        foreach ($request['ch'] as $selectedVideo) {
+            Comment::where('video_id', $selectedVideo)->delete();
+        }
+
+        flash('Sėkmingai įvykdyta', 'success');
+        return redirect('/deleteVideo');
+    }
+
+    public function changePrivacy()
+    {
+        $videos = Video::where('user_id', Auth::id())
+            ->get();
+        return view('changePrivacy', compact('videos'));
+
+    }
+
+    public function changePrivacy2(Request $request)
+    {
+        $this->validate(
+            $request,
+            ['ch' => 'required'],
+            ['ch.required' => 'Nepasirinkti video']
+        );
+
+        foreach ($request['ch'] as $selectedVideo) {
+            Video::where('user_id', Auth::id())
+                ->where('id', $selectedVideo)
+                ->update(['privacy' => $request->privacy]);
+        }
+
+        flash('Sėkmingai įvykdyta', 'success');
+        return redirect('/changePrivacy');
+
+    }
+
+    public function videoPermissions()
+    {
+        $videos = Video::where('user_id', Auth::id())
+            ->where('privacy', 'unlisted')
+            ->get();
+        return view('videoPermissions', compact('videos'));
+
+    }
+
+    public function videoPermissions2($id)
+    {
+        Video::findOrFail($id);
+
+            $users = User::with('permission')
+                ->where('confirmed', true)
+                ->get();
+
+            return view('videoPermissions2', compact('users', 'id'));
+
+    }
+
+    public function videoPermissions3(Request $request, $id)
+    {
+        $this->validate(
+            $request,
+            ['ch' => 'required'],
+            ['ch.required' => 'Nepasirinkti video']
+        );
+
+        if ($request->privacy == 1)
+        {
+
+            foreach ($request['ch'] as $selectedVideo) {
+
+                $permissions = Permission::where('user_id', $selectedVideo)
+                    ->where('video_id', $id)
+                    ->first();
+
+                if (is_null($permissions)) {
+                    $permission = new Permission;
+
+                    $permission->user_id = $selectedVideo;
+                    $permission->video_id = $id;
+                    $permission->save();
+                }
+            }
+        }
+        if ($request->privacy == 0)
+        {
+            foreach ($request['ch'] as $selectedVideo) {
+                Permission::where('user_id', $selectedVideo)
+                    ->where('video_id', $id)->delete();
+            }
+
+        }
+
+        flash('Sėkmingai įvykdyta', 'success');
+        return Redirect::back();
     }
 
 }

@@ -10,41 +10,52 @@
             <div class="col-xs-12 col-sm-9">
 
                 <div class="panel panel-default">
-                    <div class="panel-heading"><b>Naujienos</b></div>
+                    <div class="panel-heading"><b>Privačių video teisės</b></div>
                     <div class="panel-body">
 
-                    {!! Form::open(['url' => '/assignPlaylist', 'class' => 'form-horizontal']) !!}
+                        @include('flash::message')
+                        @include('errors')
+
+                    {!! Form::open(['url' => '/videoPermissions3/' . $id, 'class' => 'form-horizontal']) !!}
                         <fieldset>
 
-                            {{ ($errors->has('playlists')) ? $errors->first('playlists') : '' }}
+                            {{ ($errors->has('privacy')) ? $errors->first('privacy') : '' }}
                             <div class="form-group">
-                                <label for="playlist" class="col-lg-2 control-label">Pavadinimas</label>
+                                <label for="privacy" class="col-lg-2 control-label">Veiksmas</label>
                                 <div class="col-lg-10">
-                                    <select name="playlist" class="form-control">
-                                        @foreach ($playlists as $playlist)
-                                            <option value="{{ $playlist->id }}">{{ $playlist->title }}</option>
-                                        @endforeach
+                                    <select name="privacy" class="form-control">
+
+                                        <option value="1">Suteikti teisę</option>
+                                        <option value="0">Atimti teisę</option>
+
                                     </select>
                                 </div>
                             </div>
 
                             <div class="form-group">
-                                <label for="title" class="col-lg-2 control-label">Jūsų video</label>
+                                <label for="title" class="col-lg-2 control-label">Vartotojai</label>
                                 <div class="col-lg-10">
                                     <table class="table table-bordered">
                                         <thead>
                                         <tr>
-                                            <th>Pavadinimas</th>
-                                            <th>Grojaraštis</th>
+                                            <th>Vardas Pavardė</th>
+                                            <th>Teisės</th>
                                         </tr>
                                         </thead>
                                         <tbody>
-                                        @foreach ($videos as $video)
+                                        @foreach ($users as $key => $user)
                                             <tr>
-                                                <td> {!! Form::checkbox('ch[]', $video['id'], false) !!} {!! Form::label($video['title']) !!}</td>
-                                                @foreach ($video->playlist as $playlist)
-                                                    <td> {!! $playlist->title !!} </td>
-                                                @endforeach
+                                                <td> {!! Form::checkbox('ch[]', $user['id'], false) !!} {!! Form::label($user['name']) !!}</td>
+
+                                                    <td>
+                                                        @foreach ($user->permission as $permission)
+                                                            @if ($permission->video_id == $id)
+
+                                                                Mato video
+                                                            @endif
+                                                        @endforeach
+                                                    </td>
+
                                             </tr>
                                         @endforeach
                                         </tbody>
@@ -55,7 +66,7 @@
                             <div class="form-group">
                                 <div class="col-lg-10 col-lg-offset-2">
                                     <button type="reset" class="btn btn-default">Išvalyti formą</button>
-                                    <button type="submit" class="btn btn-primary">Kurti naujieną</button>
+                                    <button type="submit" class="btn btn-primary">Nustatyti teises</button>
                                 </div>
                             </div>
 

@@ -10,42 +10,34 @@
             <div class="col-xs-12 col-sm-9">
 
                 <div class="panel panel-default">
-                    <div class="panel-heading"><b>Naujienos</b></div>
+                    <div class="panel-heading"><b>Trinti video</b></div>
                     <div class="panel-body">
 
-                    {!! Form::open(['url' => '/assignPlaylist', 'class' => 'form-horizontal']) !!}
+                        @include('flash::message')
+                        @include('errors')
+
+                    {!! Form::open(['url' => '/deleteVideo', 'class' => 'form-horizontal']) !!}
                         <fieldset>
 
-                            {{ ($errors->has('playlists')) ? $errors->first('playlists') : '' }}
-                            <div class="form-group">
-                                <label for="playlist" class="col-lg-2 control-label">Pavadinimas</label>
-                                <div class="col-lg-10">
-                                    <select name="playlist" class="form-control">
-                                        @foreach ($playlists as $playlist)
-                                            <option value="{{ $playlist->id }}">{{ $playlist->title }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
+                            {{ ($errors->has('videos')) ? $errors->first('videos') : '' }}
 
                             <div class="form-group">
-                                <label for="title" class="col-lg-2 control-label">Jūsų video</label>
+                                <label for="title" class="col-lg-2 control-label">Video</label>
                                 <div class="col-lg-10">
                                     <table class="table table-bordered">
                                         <thead>
                                         <tr>
                                             <th>Pavadinimas</th>
-                                            <th>Grojaraštis</th>
+                                            <th>Savininkas</th>
                                         </tr>
                                         </thead>
                                         <tbody>
                                         @foreach ($videos as $video)
                                             <tr>
                                                 <td> {!! Form::checkbox('ch[]', $video['id'], false) !!} {!! Form::label($video['title']) !!}</td>
-                                                @foreach ($video->playlist as $playlist)
-                                                    <td> {!! $playlist->title !!} </td>
+                                                @foreach ($video->users as $users)
+                                                    <td>{{ $users->name }}</td>
                                                 @endforeach
-                                            </tr>
                                         @endforeach
                                         </tbody>
                                     </table>
@@ -54,8 +46,7 @@
 
                             <div class="form-group">
                                 <div class="col-lg-10 col-lg-offset-2">
-                                    <button type="reset" class="btn btn-default">Išvalyti formą</button>
-                                    <button type="submit" class="btn btn-primary">Kurti naujieną</button>
+                                    <button type="submit" class="btn btn-primary">Trinti video</button>
                                 </div>
                             </div>
 
