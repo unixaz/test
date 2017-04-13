@@ -10,8 +10,11 @@
             <div class="col-xs-12 col-sm-9">
 
                 <div class="panel panel-default">
-                    <div class="panel-heading"><b>Naujienos</b></div>
+                    <div class="panel-heading"><b>Trinti grojaraštį</b></div>
                     <div class="panel-body">
+
+                        @include('flash::message')
+                        @include('errors')
 
                     {!! Form::open(['url' => '/deletePlaylist', 'class' => 'form-horizontal']) !!}
 
@@ -19,7 +22,7 @@
 
                             {{ ($errors->has('playlists')) ? $errors->first('playlists') : '' }}
                             <div class="form-group">
-                                <label for="playlist" class="col-lg-2 control-label">Pavadinimas</label>
+                                <label for="playlist" class="col-lg-2 control-label">Grojaraščio pavadinimas</label>
                                 <div class="col-lg-10">
                                     <select name="playlist" class="form-control">
                                         @foreach ($playlists as $playlist)
@@ -31,7 +34,7 @@
 
                             <div class="form-group">
                                 <div class="col-lg-10 col-lg-offset-2">
-                                    <button type="submit" class="btn btn-primary">Kurti naujieną</button>
+                                    <button type="submit" class="btn btn-primary">Trinti grojaraštį</button>
                                 </div>
                             </div>
 

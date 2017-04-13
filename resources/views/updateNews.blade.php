@@ -10,23 +10,22 @@
             <div class="col-xs-12 col-sm-9">
 
                 <div class="panel panel-default">
-                    <div class="panel-heading"><b>Skelbti naujieną</b></div>
+                    <div class="panel-heading"><b>Atnaujinti naujieną</b></div>
                     <div class="panel-body">
 
                         @include('flash::message')
                         @include('errors')
 
-                        {!! Form::open(['url' => '/writeNews', 'class' => 'form-horizontal']) !!}
+                        {!! Form::open(['url' => '/updateNews/' . $info->id, 'class' => 'form-horizontal']) !!}
                         <fieldset>
 
                             {{ ($errors->has('title')) ? $errors->first('title') : '' }}
                             <div class="form-group">
                                 <label for="title" class="col-lg-2 control-label">Antraštė</label>
                                 <div class="col-lg-10">
-                                    <input type="text" class="form-control" name="title" maxlength="100" required>
+                                    <input type="text" class="form-control" name="title" required value="{{ $info->title }}">
                                 </div>
                             </div>
-
 
                             {{ ($errors->has('content')) ? $errors->first('content') : '' }}
                             <div class="form-group">
@@ -42,7 +41,7 @@
                             <div class="form-group">
                                 <div class="col-lg-10 col-lg-offset-2">
                                     <button type="reset" class="btn btn-default">Išvalyti formą</button>
-                                    <button type="submit" class="btn btn-primary" onclick="return ValidateCharacterLength();">Skelbti naujieną</button>
+                                    <button type="submit" class="btn btn-primary" onclick="return ValidateCharacterLength();">Atnaujinti naujieną</button>
                                 </div>
                             </div>
                             </fieldset>
@@ -58,6 +57,7 @@
     <script src="{{ URL::to('js/tinymce/tinymce.min.js') }}"></script>
 
     <script>
+      /*  $(document).ready(function() {*/
         var editor_config = {
             path_absolute : "{{ URL::to('/') }}/",
             selector : "textarea",
@@ -77,10 +77,14 @@
                     var count = CountCharacters();
                     document.getElementById("character_count").innerHTML = count + "/500 simbolių";
                 });
+            },
+            init_instance_callback: function (editor) {
+                editor.setContent(<?php echo json_encode($info->description); ?>);
             }
         };
 
         tinymce.init(editor_config);
+
 
         function CountCharacters() {
             var content = tinymce.activeEditor.getContent().length;
@@ -97,6 +101,7 @@
 
         }
 
+       /* });*/
     </script>﻿
 @endsection
 

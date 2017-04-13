@@ -13,10 +13,28 @@
                     <div class="panel-heading"><b>Naujienos</b></div>
                     <div class="panel-body">
 
+                        @include('flash::message')
+                        @include('errors')
+
                         @foreach($info as $infos)
                             <b> {{ $infos->title }}</b>
+                                <br>
                             {!! $infos->description !!}
-                            <small>{{ $infos->created_at->diffForHumans() }}</small>
+                            <small><i>{{ $infos->created_at }}</i></small>
+
+                            @unless (Auth::guest())
+                                @if (Auth::user()->isAdmin())
+                                {!! Form::open(['url' => '/newsAction/' . $infos->id, 'class' => 'form-horizontal']) !!}
+                                    <label class="radio-inline">
+                                        <input type="radio" name="optionsRadios" value="delete"> Trinti
+                                    </label>
+                                    <label class="radio-inline">
+                                        <input type="radio" name="optionsRadios" value="update"> Redaguoti
+                                    </label>
+                                <button type="submit" class="btn btn-link btn-xs">Atlikti veiksmą</button>
+                                {!! Form::close()  !!}
+                                @endif
+                            @endunless
                             <hr>
                         @endforeach
 

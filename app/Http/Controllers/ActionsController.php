@@ -16,6 +16,13 @@ use Illuminate\Support\Facades\Redirect;
 
 class ActionsController extends Controller
 {
+
+    public function index()
+    {
+        $info = Info::all();
+        return view('home', compact('info'));
+    }
+
     public function writeNews()
     {
         return view('writeNews');
@@ -53,7 +60,7 @@ class ActionsController extends Controller
 
     public function confirmUser2($action, $id)
     {
-        $user = User::find($id);
+        $user = User::findOrFail($id);
 
         if ($action == 'add')
         {
@@ -107,7 +114,7 @@ class ActionsController extends Controller
         $this->validate(
             $request,
             ['description' => 'required'],
-            ['description.required' => 'enurodytas aprašymas']
+            ['description.required' => 'Nenurodytas aprašymas']
         );
         $this->validate(
             $request,
@@ -164,8 +171,6 @@ class ActionsController extends Controller
     {
 
         $data = $request->all();
-        Log::info(print_r($data, true));
-
 
         $video = Video::create([
             'title' => $request->get('title'),
@@ -204,8 +209,25 @@ class ActionsController extends Controller
         return view('createPlaylist', compact('videos'));
     }
 
-    public function storePlaylist(Request $request)
+    public function createPlaylist2(Request $request)
     {
+
+        $this->validate(
+            $request,
+            ['title' => 'required'],
+            ['title.required' => 'Nenurodytas pavadinimas']
+        );
+        $this->validate(
+            $request,
+            ['description' => 'required'],
+            ['description.required' => 'Nenurodytas aprašymas']
+        );
+        $this->validate(
+            $request,
+            ['ch' => 'required'],
+            ['ch.required' => 'Nepasirinkti video']
+        );
+
         $playlist = new Playlist;
 
         $playlist->user_id = Auth::id();
@@ -219,7 +241,8 @@ foreach ($request['ch'] as $selectedVideo) {
         ->update(['playlist_id' => $playlist->id]);
 }
 
-        return redirect('/');
+        flash('Sėkmingai įvykdyta', 'success');
+        return redirect('/createPlaylist');
 
     }
 
@@ -232,14 +255,21 @@ foreach ($request['ch'] as $selectedVideo) {
 
     }
 
-    public function storeAssignPlaylist(Request $request)
+    public function assignPlaylist2(Request $request)
     {
+        $this->validate(
+            $request,
+            ['ch' => 'required'],
+            ['ch.required' => 'Nepasirinkti video']
+        );
+
         foreach ($request['ch'] as $selectedVideo) {
             Video::where('user_id', Auth::id())
                 ->where('id', $selectedVideo)
                 ->update(['playlist_id' => $request->playlist]);
         }
 
+        flash('Sėkmingai įvykdyta', 'success');
         return redirect('/assignPlaylist');
 
     }
@@ -253,8 +283,14 @@ foreach ($request['ch'] as $selectedVideo) {
 
     }
 
-    public function storeDeletePlaylist(Request $request)
+    public function deletePlaylist2(Request $request)
     {
+        $this->validate(
+            $request,
+            ['playlist' => 'required'],
+            ['playlist.required' => 'Nepasirinktas grojaraštis']
+        );
+
         if ($request->playlist != 0) {
             $videos = Video::where('user_id', Auth::id())
                 ->where('playlist_id', $request->playlist)
@@ -265,6 +301,7 @@ foreach ($request['ch'] as $selectedVideo) {
 
             Playlist::destroy($request->playlist);
         }
+        flash('Sėkmingai įvykdyta', 'success');
         return redirect('/deletePlaylist');
 
     }
@@ -294,7 +331,7 @@ foreach ($request['ch'] as $selectedVideo) {
     {
         $videos = Video::findOrFail($id);
         $comments = Comment::with('users')->where('video_id', $id)->get();
-        if ($videos->privacy == 'public') {
+        if ($videos->privacy == 'public'  || $videos->user_id == Auth::id()) {
 
             return view('watchVideo', compact('videos', 'comments'));
         }elseif ($videos->privacy == 'unlisted'){
@@ -312,6 +349,12 @@ foreach ($request['ch'] as $selectedVideo) {
 
     public function addComment($id, Request $request)
     {
+        $this->validate(
+            $request,
+            ['comment' => 'required'],
+            ['comment.required' => 'Neparašytas komentaras']
+        );
+
         $video = Video::findOrFail($id);
 
         if ($video->privacy == 'public') {
@@ -358,31 +401,6 @@ foreach ($request['ch'] as $selectedVideo) {
         $videos = $videosIdDaugiauUz0->merge($videosId0);
 
         return view('videoList', compact('videos'));
-
-    }
-
-    public function sortPlaylist()
-    {
-
-$playlist_id = 6;
-        $videos = Video::where('playlist_id', $playlist_id)
-            ->get();
-
-        $videos = $videos->sortBy('id')
-        ->sortBy('order_in_playlist');
-
-        return view('sortPlaylist', compact('videos', 'playlist_id'));
-
-    }
-    public function sortPlaylist2(Request $request)
-    {
-
-foreach ($request->rearranged_list as $key=>$videoIdList)
-{
-    Video::where('id', $videoIdList)
-        ->update(['order_in_playlist' => $key+1]);
-}
-
 
     }
 
@@ -526,5 +544,144 @@ foreach ($request->rearranged_list as $key=>$videoIdList)
         flash('Sėkmingai įvykdyta', 'success');
         return Redirect::back();
     }
+
+    public function changeVideoOrder()
+    {
+        $playlists = Playlist::where('user_id', Auth::id())->get();
+        $videos = array();
+        foreach ($playlists as $playlist) {
+            $videos[] = Video::where('playlist_id', $playlist->id)
+                ->count();
+        }
+
+        return view('changeVideoOrder', compact('playlists','videos'));
+
+    }
+
+    public function changeVideoOrder2(Request $request, $id)
+    {
+        $videos = Video::where('playlist_id', $id)
+            ->where('user_id', Auth::id())
+            ->get();
+
+        $videos = $videos->sortBy('id')
+            ->sortBy('order_in_playlist');
+
+        $videosIdDaugiauUz0 = $videos->filter(function ($value, $key) {
+            return $value->order_in_playlist > 0;
+        });
+
+        $videosId0 = $videos->filter(function ($value, $key) {
+            return $value->order_in_playlist == 0;
+        });
+
+        $videos = $videosIdDaugiauUz0->merge($videosId0);
+
+        return view('changeVideoOrder2', compact('videos', 'id'));
+
+    }
+    public function changeVideoOrder3(Request $request)
+    {
+        if (empty($request->rearranged_list))
+        {
+            return response()->json([
+                'message' => 'Pozicijos neišsaugotos',
+                'resp' => 'false'
+            ]);
+        }else {
+            foreach ($request->rearranged_list as $key => $videoIdList) {
+                Video::where('id', $videoIdList)
+                    ->update(['order_in_playlist' => $key + 1]);
+            }
+
+            return response()->json([
+                'message' => 'Pozicijos išsaugotos',
+                'resp' => 'true'
+            ]);
+        }
+
+    }
+
+    public function professorsList()
+    {
+        $professors = User::where('confirmed', true)
+            ->whereIn('role', [1,2])
+            ->get();
+        return view('professorsList', compact('professors'));
+
+    }
+
+    public function professorsList2($id)
+    {
+        $professor = User::findOrFail($id);
+        $playlists = Playlist::where('user_id', $id)->get();
+        $videos = Video::with('permissions')->where('user_id', $id)->get();
+        $videosCount = array();
+        foreach ($playlists as $playlist) {
+            $videosCount[] = Video::where('playlist_id', $playlist->id)
+                ->count();
+        }
+
+        return view('professorsList2', compact('playlists','videosCount', 'videos', 'professor'));
+
+    }
+
+    public function newsAction($id, Request $request)
+    {
+        $info = Info::findOrFail($id);
+        if ($request->optionsRadios == 'delete')
+        {
+            $info->delete();
+
+            flash('Sėkmingai įvykdyta', 'success');
+            return redirect('/');
+        }elseif ($request->optionsRadios == 'update')
+        {
+            return view('updateNews', compact('info'));
+        }
+
+        flash('Nepasirinktas veiksmas', 'danger');
+        return redirect('/');
+
+    }
+
+    public function updateNews2(Request $request, $id)
+    {
+        $this->validate(
+            $request,
+            ['title' => 'required'],
+            ['title.required' => 'Nenurodyta antraštė']
+        );
+        $this->validate(
+            $request,
+            ['content' => 'required'],
+            ['content.required' => 'Nenurodyta naujiena']
+        );
+
+        $info = Info::where('id', $id)->first();
+
+        $info->title = $request['title'];
+        $info->description = $request['content'];
+        $info->save();
+
+        return redirect('/');
+    }
+
+    public function deleteComment($id, Request $request)
+    {
+        $comment= Comment::findOrFail($id);
+        if ($request->optionsRadios == 'delete')
+        {
+            $comment->delete();
+
+            flash('Sėkmingai įvykdyta', 'success');
+            return Redirect::back();
+        }
+
+        flash('Nepasirinktas veiksmas', 'danger');
+        return Redirect::back();
+
+    }
+
 
 }

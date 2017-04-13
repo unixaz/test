@@ -11,22 +11,28 @@
             <div class="col-xs-12 col-sm-9">
 
                 <div class="panel panel-default">
-                    <div class="panel-heading"><b>Naujienos</b></div>
+                    <div class="panel-heading"><b>Keisti video pozicijas grojaraštyje</b></div>
                     <div class="panel-body">
 
-                        <ul id="sortable">
-                        @foreach ($videos as $video)
-                                <div class="panel panel-default ui-state-default" data-id="{!! $video['id'] !!}" >
-                                    <div class="panel-body">
-                                        {!! $video['title'] !!}
-                                    </div>
-                                </div>
+                        <div id="response"></div>
 
-                        @endforeach
+                        <label for="playlist" class="col-lg-2 control-label">Jūsų video</label>
+                        <div class="col-lg-10">
+                            Paspauskite ant video elemento ir tempkite jį aukštyn/žemym norint keisti poziciją
+                            <ul id="sortable">
+                                @foreach ($videos as $video)
+                                    <div class="panel panel-default ui-state-default" data-id="{!! $video['id'] !!}" >
+                                        <div class="panel-body">
+                                            {!! $video['title'] !!}
+                                        </div>
+                                    </div>
+
+                                @endforeach
                         </ul>
+                        </div>
                         <div class="form-group">
                             <div class="col-lg-10 col-lg-offset-2">
-                                <button id="save-reorder" class="btn btn-primary">Saugoti</button>
+                                <button type="submit" id="save-reorder" class="btn btn-primary">Saugoti pozicijas</button>
                             </div>
                         </div>
 
@@ -52,14 +58,20 @@
             var data=list;
             $.ajax({
                 headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-                url: 'sortPlaylist2', // server url
-                type: 'POST', //POST or GET
+                url: '/bakalauras/public/changeVideoOrder3',
+                type: 'POST',
                 data: {
-                    playlist_id:'<?php echo $playlist_id; ?>',
+                    playlist_id:'<?php echo $id; ?>',
                     rearranged_list:data
                 }, // data to send in ajax format or querystring format
                 datatype: 'json',
-                success: function(message) {
+                success: function(data){
+                    if(data.resp){
+                        $('#response').html('<div class="alert alert-info col-ssm-12" >' + data.message + '</div>');
+                    }else{
+                        $('#response').html('<div class="alert alert-info col-ssm-12" >' + data.message + '</div>');
+                    }
+
 
                 }
 
