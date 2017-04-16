@@ -62,7 +62,7 @@
                 type: 'POST',
                 data: {
                     playlist_id:'<?php echo $id; ?>',
-                    rearranged_list:data
+                    rearranged_list:data,
                 }, // data to send in ajax format or querystring format
                 datatype: 'json',
                 success: function(data){

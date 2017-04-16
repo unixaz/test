@@ -85,11 +85,21 @@
                             </div>
                             <hr>
                             <div class="form-group">
-                                <label for="title">Dėstytojas:</label>
+                                <label for="role">Dėstytojas:</label>
                                 <select id="role" class="form-control">
                                     @foreach($users as $user)
                                         <option value="{{ $user->id }}">{{ $user->name }}</option>
                                     @endforeach
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="difficulty">Sudėtingumas:</label>
+                                <select id="difficulty" class="form-control">
+                                    <option value="1">Labai lengvas</option>
+                                    <option value="2">Lengvas</option>
+                                    <option value="3">Vidutinis</option>
+                                    <option value="4">Sudėtingas</option>
+                                    <option value="5">Labai sudėtingas</option>
                                 </select>
                             </div>
                             <div class="form-group">
@@ -308,7 +318,8 @@
                         description: document.getElementById("description").value,
                         video_id: this.videoId,
                         user_id: document.getElementById("role").value,
-                        privacy: document.getElementById("privacy-status").value
+                        privacy: document.getElementById("privacy-status").value,
+                        difficulty: document.getElementById("difficulty").value
                     },
                     dataType: 'JSON',
                     success: function( msg ) {

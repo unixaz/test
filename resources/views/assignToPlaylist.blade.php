@@ -16,7 +16,7 @@
                         @include('flash::message')
                         @include('errors')
 
-                    {!! Form::open(['url' => '/assignPlaylist', 'class' => 'form-horizontal']) !!}
+                    {!! Form::open(['url' => '/assignToPlaylist', 'class' => 'form-horizontal']) !!}
                         <fieldset>
 
                             {{ ($errors->has('playlists')) ? $errors->first('playlists') : '' }}
@@ -38,16 +38,12 @@
                                         <thead>
                                         <tr>
                                             <th>Pavadinimas</th>
-                                            <th>Priklauso grojaraščiui</th>
                                         </tr>
                                         </thead>
                                         <tbody>
                                         @foreach ($videos as $video)
                                             <tr>
                                                 <td> {!! Form::checkbox('ch[]', $video['id'], false) !!} {!! Form::label($video['title']) !!}</td>
-                                                @foreach ($video->playlist as $playlist)
-                                                    <td> {!! $playlist->title !!} </td>
-                                                @endforeach
                                             </tr>
                                         @endforeach
                                         </tbody>

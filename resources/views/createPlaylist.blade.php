@@ -10,7 +10,7 @@
             <div class="col-xs-12 col-sm-9">
 
                 <div class="panel panel-default">
-                    <div class="panel-heading"><b>Kurti grojarašyį</b></div>
+                    <div class="panel-heading"><b>Kurti grojaraštį</b></div>
                     <div class="panel-body">
 
                         @include('flash::message')
@@ -35,16 +35,12 @@
                                         <thead>
                                         <tr>
                                             <th>Pavadinimas</th>
-                                            <th>Priklauso grojaraščiui</th>
                                         </tr>
                                         </thead>
                                         <tbody>
                                             @foreach ($videos as $video)
                                                 <tr>
                                                     <td> {!! Form::checkbox('ch[]', $video['id'], false) !!} {!! Form::label($video['title']) !!}</td>
-                                                    @foreach ($video->playlist as $playlist)
-                                                        <td> {!! $playlist->title !!} </td>
-                                                    @endforeach
                                                 </tr>
                                             @endforeach
                                         </tbody>

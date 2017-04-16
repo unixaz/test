@@ -5,10 +5,12 @@ namespace App\Http\Controllers;
 use App\Comment;
 use App\Info;
 use App\Permission;
+use App\StarVideo;
 use App\Tag;
 use App\User;
 use App\Video;
 use App\Playlist;
+use App\VideosInPlaylist;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -127,8 +129,6 @@ class ActionsController extends Controller
             'description'  => $request->get('description'),
             'video_id'  => $values,
             'user_id'  => $request->get('professor'),
-            'playlist_id'  => 0,
-            'order_in_playlist' => 0,
             'privacy' => 'public'
         ]);
 
@@ -147,7 +147,8 @@ class ActionsController extends Controller
             }
             $video->tags()->sync($tagIds);
         }
-        return redirect('/');
+        flash('Sėkmingai įvykdyta', 'success');
+        return redirect('/addVideo');
 
     }
 
@@ -175,6 +176,7 @@ class ActionsController extends Controller
         $video = Video::create([
             'title' => $request->get('title'),
             'description'  => $request->get('description'),
+            'difficulty'  => $request->get('difficulty'),
             'video_id'  => $request->get('video_id'),
             'user_id'  => $request->get('user_id'),
             'playlist_id'  => 0,
@@ -204,7 +206,7 @@ class ActionsController extends Controller
 
     public function createPlaylist()
     {
-        $videos = Video::with('playlist')->where('user_id', Auth::id())->get();
+        $videos = Video::where('user_id', Auth::id())->get();
 
         return view('createPlaylist', compact('videos'));
     }
@@ -235,10 +237,14 @@ class ActionsController extends Controller
         $playlist->description = $request['description'];
         $playlist->save();
 
+
 foreach ($request['ch'] as $selectedVideo) {
-    Video::where('user_id', Auth::id())
-        ->where('id', $selectedVideo)
-        ->update(['playlist_id' => $playlist->id]);
+    $videosInPlaylists = new VideosInPlaylist;
+    $videosInPlaylists->user_id = Auth::id();
+    $videosInPlaylists->playlist_id = $playlist->id;
+    $videosInPlaylists->video_id = $selectedVideo;
+    $videosInPlaylists->order_in_playlist = 0;
+    $videosInPlaylists->save();
 }
 
         flash('Sėkmingai įvykdyta', 'success');
@@ -246,16 +252,16 @@ foreach ($request['ch'] as $selectedVideo) {
 
     }
 
-    public function assignPlaylist()
+    public function assignToPlaylist()
     {
-        $videos = Video::with('playlist')->where('user_id', Auth::id())->get();
+        $videos = Video::where('user_id', Auth::id())->get();
         $playlists = Playlist::where('user_id', Auth::id())
             ->get();
-        return view('assignPlaylist', compact('videos', 'playlists'));
+        return view('assignToPlaylist', compact('videos', 'playlists'));
 
     }
 
-    public function assignPlaylist2(Request $request)
+    public function assignToPlaylist2(Request $request)
     {
         $this->validate(
             $request,
@@ -263,15 +269,24 @@ foreach ($request['ch'] as $selectedVideo) {
             ['ch.required' => 'Nepasirinkti video']
         );
 
-        foreach ($request['ch'] as $selectedVideo) {
-            Video::where('user_id', Auth::id())
-                ->where('id', $selectedVideo)
-                ->update(['playlist_id' => $request->playlist]);
+        if (Playlist::where('user_id', Auth::id())->where('id', $request->playlist)->first()) {
+
+            foreach ($request['ch'] as $selectedVideo) {
+                if (!VideosInPlaylist::where('user_id', Auth::id())->where('playlist_id', $request->playlist)->where('video_id', $selectedVideo)->first()) {
+                    $videosInPlaylists = new VideosInPlaylist;
+                    $videosInPlaylists->user_id = Auth::id();
+                    $videosInPlaylists->playlist_id = $request->playlist;
+                    $videosInPlaylists->video_id = $selectedVideo;
+                    $videosInPlaylists->order_in_playlist = 0;
+                    $videosInPlaylists->save();
+                }
+            }
+
+            flash('Sėkmingai įvykdyta', 'success');
+            return redirect('/assignToPlaylist');
         }
-
-        flash('Sėkmingai įvykdyta', 'success');
-        return redirect('/assignPlaylist');
-
+        flash('Klaida', 'danger');
+        return redirect('/assignToPlaylist');
     }
 
     public function deletePlaylist()
@@ -291,24 +306,35 @@ foreach ($request['ch'] as $selectedVideo) {
             ['playlist.required' => 'Nepasirinktas grojaraštis']
         );
 
-        if ($request->playlist != 0) {
-            $videos = Video::where('user_id', Auth::id())
+            $videos = VideosInPlaylist::where('user_id', Auth::id())
                 ->where('playlist_id', $request->playlist)
                 ->get();
             foreach ($videos as $video) {
-                $video->update(['playlist_id' => 0]);
+                VideosInPlaylist::destroy($video->id);
             }
 
             Playlist::destroy($request->playlist);
-        }
+
         flash('Sėkmingai įvykdyta', 'success');
         return redirect('/deletePlaylist');
-
     }
 
     public function videoList()
     {
-        $videos = Video::with('permissions')->get();
+        $allVideos = Video::all();
+
+        foreach ($allVideos as $allVideo) {
+
+            if ($allVideo['privacy'] == 'public')
+            {
+                $videos[] = $allVideo;
+            }elseif ($allVideo['privacy'] == 'unlisted' && !Auth::guest()){
+                if (Permission::where('user_id', Auth::id())->where('video_id', $allVideo->id)->first()) {
+                    $videos[] = $allVideo;
+                }
+            }
+
+        }
 
         return view('videoList', compact('videos'));
 
@@ -319,7 +345,7 @@ foreach ($request['ch'] as $selectedVideo) {
         $playlists = Playlist::all();
         $videos = array();
         foreach ($playlists as $playlist) {
-            $videos[] = Video::where('playlist_id', $playlist->id)
+            $videos[] = VideosInPlaylist::where('playlist_id', $playlist->id)
                 ->count();
         }
 
@@ -330,16 +356,19 @@ foreach ($request['ch'] as $selectedVideo) {
     public function watchVideo($id)
     {
         $videos = Video::findOrFail($id);
+        $star = StarVideo::where('user_id', Auth::id())->where('video_id', $id)->first();
+        $count = StarVideo::where(['video_id' => $id])->count();
+
         $comments = Comment::with('users')->where('video_id', $id)->get();
         if ($videos->privacy == 'public'  || $videos->user_id == Auth::id()) {
 
-            return view('watchVideo', compact('videos', 'comments'));
+            return view('watchVideo', compact('videos', 'comments', 'star', 'count'));
         }elseif ($videos->privacy == 'unlisted'){
             $permission = Permission::where('user_id', Auth::id())
             ->where('video_id', $id)->first();
             if ($permission)
             {
-                return view('watchVideo', compact('videos', 'comments'));
+                return view('watchVideo', compact('videos', 'comments', 'star', 'count'));
             }else{
                 return redirect('/');
             }
@@ -384,21 +413,37 @@ foreach ($request['ch'] as $selectedVideo) {
 
     public function videoPlaylist($id)
     {
-        $videos = Video::with('permissions')
-            ->where('playlist_id', $id)->get();
 
-        $videos = $videos->sortBy('id')
+        $videosInPlaylists = VideosInPlaylist::where('playlist_id', $id)->get();
+
+        $videosInPlaylists = $videosInPlaylists->sortBy('id')
             ->sortBy('order_in_playlist');
 
-        $videosIdDaugiauUz0 = $videos->filter(function ($value, $key) {
+        $orderGreaterThan0 = $videosInPlaylists->filter(function ($value, $key) {
             return $value->order_in_playlist > 0;
         });
 
-        $videosId0 = $videos->filter(function ($value, $key) {
+        $orderIs0 = $videosInPlaylists->filter(function ($value, $key) {
             return $value->order_in_playlist == 0;
         });
 
-        $videos = $videosIdDaugiauUz0->merge($videosId0);
+        $videosInPlaylists = $orderGreaterThan0->merge($orderIs0);
+
+        $videos = array();
+
+        foreach ($videosInPlaylists as $videosInPlaylist) {
+            $video = Video::find($videosInPlaylist->video_id);
+
+            if ($video['privacy'] == 'public')
+            {
+                $videos[] = $video;
+            }elseif ($video['privacy'] == 'unlisted' && !Auth::guest()){
+                if (Permission::where('user_id', Auth::id())->where('video_id', $videosInPlaylist->video_id)->first()) {
+                    $videos[] = $video;
+                }
+            }
+
+        }
 
         return view('videoList', compact('videos'));
 
@@ -550,7 +595,7 @@ foreach ($request['ch'] as $selectedVideo) {
         $playlists = Playlist::where('user_id', Auth::id())->get();
         $videos = array();
         foreach ($playlists as $playlist) {
-            $videos[] = Video::where('playlist_id', $playlist->id)
+            $videos[] = VideosInPlaylist::where('playlist_id', $playlist->id)
                 ->count();
         }
 
@@ -560,22 +605,26 @@ foreach ($request['ch'] as $selectedVideo) {
 
     public function changeVideoOrder2(Request $request, $id)
     {
-        $videos = Video::where('playlist_id', $id)
-            ->where('user_id', Auth::id())
-            ->get();
 
-        $videos = $videos->sortBy('id')
+        $videosInPlaylists = VideosInPlaylist::where('user_id', Auth::id())->where('playlist_id', $id)->get();
+
+        $videosInPlaylists = $videosInPlaylists->sortBy('id')
             ->sortBy('order_in_playlist');
 
-        $videosIdDaugiauUz0 = $videos->filter(function ($value, $key) {
+        $orderGreaterThan0 = $videosInPlaylists->filter(function ($value, $key) {
             return $value->order_in_playlist > 0;
         });
 
-        $videosId0 = $videos->filter(function ($value, $key) {
+        $orderIs0 = $videosInPlaylists->filter(function ($value, $key) {
             return $value->order_in_playlist == 0;
         });
 
-        $videos = $videosIdDaugiauUz0->merge($videosId0);
+        $videosInPlaylists = $orderGreaterThan0->merge($orderIs0);
+
+        $videos = array();
+        foreach ($videosInPlaylists as $videosInPlaylist) {
+            $videos[] = Video::find($videosInPlaylist->video_id);
+        }
 
         return view('changeVideoOrder2', compact('videos', 'id'));
 
@@ -590,7 +639,7 @@ foreach ($request['ch'] as $selectedVideo) {
             ]);
         }else {
             foreach ($request->rearranged_list as $key => $videoIdList) {
-                Video::where('id', $videoIdList)
+                VideosInPlaylist::where('user_id', Auth::id())->where('playlist_id', $request->playlist_id)->where('video_id', $videoIdList)
                     ->update(['order_in_playlist' => $key + 1]);
             }
 
@@ -615,11 +664,25 @@ foreach ($request['ch'] as $selectedVideo) {
     {
         $professor = User::findOrFail($id);
         $playlists = Playlist::where('user_id', $id)->get();
-        $videos = Video::with('permissions')->where('user_id', $id)->get();
+        $allVideos = Video::where('user_id', $id)->get();
         $videosCount = array();
         foreach ($playlists as $playlist) {
-            $videosCount[] = Video::where('playlist_id', $playlist->id)
+            $videosCount[] = VideosInPlaylist::where('playlist_id', $playlist->id)
                 ->count();
+        }
+
+        $videos = array();
+        foreach ($allVideos as $allVideo) {
+
+            if ($allVideo['privacy'] == 'public')
+            {
+                $videos[] = $allVideo;
+            }elseif ($allVideo['privacy'] == 'unlisted' && !Auth::guest()){
+                if (Permission::where('user_id', Auth::id())->where('video_id', $allVideo->id)->first()) {
+                    $videos[] = $allVideo;
+                }
+            }
+
         }
 
         return view('professorsList2', compact('playlists','videosCount', 'videos', 'professor'));
@@ -683,5 +746,177 @@ foreach ($request['ch'] as $selectedVideo) {
 
     }
 
+    public function deleteFromPlaylist()
+    {
+        $playlists = Playlist::where('user_id', Auth::id())->get();
+        $videos = array();
+        foreach ($playlists as $playlist) {
+            $videos[] = VideosInPlaylist::where('playlist_id', $playlist->id)
+                ->count();
+        }
+
+        return view('deleteFromPlaylist', compact('playlists','videos'));
+    }
+
+    public function deleteFromPlaylist2($id)
+    {
+        $playlist = Playlist::where('user_id', Auth::id())->where('id', $id)->first();
+        $videosInPlaylists = VideosInPlaylist::where('user_id', Auth::id())->where('playlist_id', $id)->get();
+        $videoId = array();
+        foreach ($videosInPlaylists as $videosInPlaylist) {
+            $videoId[] = $videosInPlaylist->video_id;
+        }
+        $videos = Video::find($videoId);
+
+        return view('deleteFromPlaylist2', compact('videos', 'playlist','id'));
+
+    }
+
+    public function deleteFromPlaylist3(Request $request, $id)
+    {
+        $this->validate(
+            $request,
+            ['ch' => 'required'],
+            ['ch.required' => 'Nepasirinkti video']
+        );
+
+        if (Playlist::where('user_id', Auth::id())->where('id', $id)->first()) {
+
+            foreach ($request['ch'] as $selectedVideo) {
+                $videoInPlaylist = VideosInPlaylist::where('user_id', Auth::id())->where('playlist_id', $id)->where('video_id', $selectedVideo)->first();
+                $videoInPlaylist->delete();
+            }
+
+            flash('Sėkmingai įvykdyta', 'success');
+            return redirect('/deleteFromPlaylist');
+        }
+        flash('Klaida', 'danger');
+        return redirect('/deleteFromPlaylist');
+    }
+
+    public function starVideo(Request $request)
+    {
+
+        if (StarVideo::where('user_id', Auth::id())->where('video_id', $request->video_id)->first()) {
+            return response()->json('', 404);
+        }else{
+            $count = StarVideo::where(['video_id' => $request->video_id])->count();
+            StarVideo::updateOrCreate(['user_id' => Auth::id(), 'video_id' => $request->video_id]);
+        }
+    }
+
+    public function updateVideoInfo($id)
+    {
+        $video = Video::with('tags')->where('id', $id)->first();
+        $tags_string = '';
+
+        foreach ($video->tags as $tags)
+        {
+            $tags_string = $tags->name . "," . $tags_string ;
+        }
+        $tags_string = substr($tags_string, 0, -1);
+
+        return view('updateVideoInfo', compact('video','tags_string'));
+    }
+
+    public function updateVideoInfo2(Request $request, $id)
+    {
+
+        $this->validate(
+            $request,
+            ['title' => 'required'],
+            ['title.required' => 'Nenurodyta antraštė']
+        );
+        $this->validate(
+            $request,
+            ['description' => 'required'],
+            ['description.required' => 'Nenurodytas aprašymas']
+        );
+
+        $this->validate(
+            $request,
+            ['tags' => 'required'],
+            ['tags.required' => 'Nenurodyti raktažodžiai']
+        );
+
+        $video = Video::where('id', $id)->first();
+
+        $tagNames = explode(',', $request->get('tags'));
+        $tagIds = [];
+        foreach($tagNames as $tagName)
+        {
+            $tag = Tag::firstOrCreate(['name'=>$tagName]);
+            if($tag)
+            {
+                $tagIds[] = $tag->id;
+            }
+
+        }
+        $video->tags()->sync($tagIds);
+
+        $video->difficulty = $request->difficulty;
+        $video->title = $request->title;
+        $video->description = $request->description;
+        $video->save();
+
+        flash('Sėkmingai įvykdyta', 'success');
+        return Redirect::back();
+    }
+
+    public function searchByDifficulty(Request $request)
+    {
+        $allVideos = Video::where('difficulty', $request->difficulty)->get();
+        $videos = array();
+        foreach ($allVideos as $allVideo) {
+
+            if ($allVideo['privacy'] == 'public')
+            {
+                $videos[] = $allVideo;
+            }elseif ($allVideo['privacy'] == 'unlisted' && !Auth::guest()){
+                if (Permission::where('user_id', Auth::id())->where('video_id', $allVideo->id)->first()) {
+                    $videos[] = $allVideo;
+                }
+            }
+
+        }
+
+        return view('videoList', compact('videos'));
+
+    }
+
+    public function searchByTag(Request $request)
+    {
+        $this->validate(
+            $request,
+            ['tag' => 'required'],
+            ['tag.required' => 'Nenurodytas raktažodis']
+        );
+
+        $tag = Tag::with('videos')->where('name', $request->tag)->first();
+
+        if ($tag)
+        {
+            $allVideos = $tag->videos;
+            $videos = array();
+            foreach ($allVideos as $allVideo) {
+
+                if ($allVideo['privacy'] == 'public')
+                {
+                    $videos[] = $allVideo;
+                }elseif ($allVideo['privacy'] == 'unlisted' && !Auth::guest()){
+                    if (Permission::where('user_id', Auth::id())->where('video_id', $allVideo->id)->first()) {
+                        $videos[] = $allVideo;
+                    }
+                }
+
+            }
+
+            return view('videoList', compact('videos'));
+        }else{
+            flash('Nerasta video pagal raktažodį', 'danger');
+            return Redirect::back();
+        }
+
+    }
 
 }

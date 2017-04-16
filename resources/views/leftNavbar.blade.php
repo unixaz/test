@@ -59,7 +59,8 @@
                     </a>
                     <ul class="dropdown-menu">
                         <li><a href="{{ url('createPlaylist') }}"><i class="fa fa-dashboard fa-fw"></i> Kurti grojaraštį</a></li>
-                        <li><a href="{{ url('assignPlaylist') }}"><i class="fa fa-dashboard fa-fw"></i> Priskirti video grojaraščiui</a></li>
+                        <li><a href="{{ url('assignToPlaylist') }}"><i class="fa fa-dashboard fa-fw"></i> Priskirti video grojaraščiui</a></li>
+                        <li><a href="{{ url('deleteFromPlaylist') }}"><i class="fa fa-dashboard fa-fw"></i> Pašalinti video iš grojaraščio</a></li>
                         <li><a href="{{ url('changeVideoOrder') }}"><i class="fa fa-dashboard fa-fw"></i> Keisti video pozicijas grojaraštyje</a></li>
                         <li class="divider"></li>
                         <li><a href="{{ url('deletePlaylist') }}"><i class="fa fa-dashboard fa-fw"></i> Trinti grojaraštį</a></li>

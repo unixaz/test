@@ -38,6 +38,9 @@ Route::group(['middleware' => ['admin']], function () {
     Route::post('/updateNews/{id}', 'ActionsController@updateNews2');
 
     Route::post('/deleteComment/{id}', 'ActionsController@deleteComment');
+
+    Route::get('/updateVideoInfo/{id}', 'ActionsController@updateVideoInfo');
+    Route::post('/updateVideoInfo2/{id}', 'ActionsController@updateVideoInfo2');
 });
 
 Route::group(['middleware' => ['admin_professor']], function () {
@@ -54,8 +57,12 @@ Route::group(['middleware' => ['admin_professor']], function () {
     Route::get('/createPlaylist', 'ActionsController@createPlaylist');
     Route::post('/createPlaylist', 'ActionsController@createPlaylist2');
 
-    Route::get('/assignPlaylist', 'ActionsController@assignPlaylist');
-    Route::post('/assignPlaylist', 'ActionsController@assignPlaylist2');
+    Route::get('/assignToPlaylist', 'ActionsController@assignToPlaylist');
+    Route::post('/assignToPlaylist', 'ActionsController@assignToPlaylist2');
+
+    Route::get('/deleteFromPlaylist', 'ActionsController@deleteFromPlaylist');
+    Route::get('/deleteFromPlaylist2/{id}', 'ActionsController@deleteFromPlaylist2');
+    Route::post('/deleteFromPlaylist3/{id}', 'ActionsController@deleteFromPlaylist3');
 
     Route::get('/deletePlaylist', 'ActionsController@deletePlaylist');
     Route::post('/deletePlaylist', 'ActionsController@deletePlaylist2');
@@ -68,6 +75,7 @@ Route::group(['middleware' => ['admin_professor']], function () {
 Route::group(['middleware' => ['confirmed_user']], function () {
 
     Route::post('/addComment/{id}', 'ActionsController@addComment');
+    Route::post('/starVideo', 'ActionsController@starVideo');
 
 });
 
@@ -78,4 +86,6 @@ Route::group(['middleware' => ['confirmed_user']], function () {
     Route::get('/watch/{id}', 'ActionsController@watchVideo');
     Route::get('/professorsList', 'ActionsController@professorsList');
     Route::get('/professorsList2/{id}', 'ActionsController@professorsList2');
+    Route::post('/searchByDifficulty', 'ActionsController@searchByDifficulty');
+    Route::post('/searchByTag', 'ActionsController@searchByTag');
 

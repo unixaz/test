@@ -16,6 +16,36 @@
                         <b>{{ $videos['title'] }}</b>
                         <br>
                         {{ $videos['description'] }}
+                        <br>
+                        <small>Sudėtingumas:
+                        @if ($videos['difficulty'] == 1)
+                            Labai lengvas
+                        @elseif ($videos['difficulty'] == 2)
+                            Lengvas
+                        @elseif ($videos['difficulty'] == 3)
+                            Vidutinis
+                        @elseif ($videos['difficulty'] == 4)
+                            Sunkus
+                        @elseif ($videos['difficulty'] == 5)
+                            Labai sunkus
+                        @endif
+                        </small>
+
+                        @if (isset($star) || Auth::guest())
+                            <button type="button" class="btn btn-default btn-sm pull-right" disabled>
+                                <span class="glyphicon glyphicon-star"></span> ({{ $count }}) Patinka
+                            </button>
+                        @else
+                            <button type="button" class="btn btn-default btn-sm pull-right" id="star">
+                                <span class="glyphicon glyphicon-star-empty"></span> ({{ $count }}) Patinka
+                            </button>
+                        @endif
+
+                        @unless (Auth::guest())
+                            @if (Auth::user()->isAdmin())
+                                <a href="{{ url('updateVideoInfo/' . $videos['id']) }}" class="btn btn-info btn-sm pull-right" role="button">Redaguoti info</a>
+                            @endif
+                        @endunless
                         <hr>
 
                         @if(!Auth::guest())
@@ -68,4 +98,30 @@
             </div>
         </div>
     </div>
+
+    <script>
+
+        $(document).ready(function(){
+
+            $('#star').click( function(){
+
+                $.ajax({
+                    headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                    url: '/bakalauras/public/starVideo',
+                    type: 'POST',
+                    data: {
+                        video_id:'<?php echo $videos['id']; ?>',
+                    },
+                    datatype: 'json',
+                    success: function(){
+                        $('#star').find('span').removeClass("glyphicon-star-empty").addClass("glyphicon-star");
+                        document.getElementById("star").disabled = true;
+                    }
+
+                });
+            });
+
+        });
+
+    </script>
 @endsection

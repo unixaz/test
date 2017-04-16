@@ -26,10 +26,6 @@ class Video extends Model
         return $this->hasMany('App\Playlist', 'id', 'playlist_id');
     }
 
-    public function permissions()
-    {
-        return $this->hasMany('App\Permission', 'video_id', 'id');
-    }
 
     public function users()
     {
