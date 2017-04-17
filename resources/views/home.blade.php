@@ -9,6 +9,19 @@
 
             <div class="col-xs-12 col-sm-9">
 
+                @if ($settings->streaming == true)
+                <div class="panel panel-default">
+                    <div class="panel-heading"><b>Tiesioginė transliacija</b></div>
+                    <div class="panel-body">
+                        @if (!empty($streaming))
+                        {!! $streaming->embedCode() !!}
+                            @else
+                        Transliacija nevyksta
+                            @endif
+                    </div>
+                </div>
+                @endif
+
                 <div class="panel panel-default">
                     <div class="panel-heading"><b>Naujienos</b></div>
                     <div class="panel-body">

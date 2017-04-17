@@ -41,6 +41,8 @@ Route::group(['middleware' => ['admin']], function () {
 
     Route::get('/updateVideoInfo/{id}', 'ActionsController@updateVideoInfo');
     Route::post('/updateVideoInfo2/{id}', 'ActionsController@updateVideoInfo2');
+
+    Route::get('/toggleStreaming', 'ActionsController@toggleStreaming');
 });
 
 Route::group(['middleware' => ['admin_professor']], function () {

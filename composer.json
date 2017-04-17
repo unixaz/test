@@ -25,7 +25,10 @@
         ],
         "psr-4": {
             "App\\": "app/"
-        }
+        },
+        "files": [
+            "app/Classes/EmbedYoutubeLiveStreaming.php"
+        ]
     },
     "autoload-dev": {
         "psr-4": {

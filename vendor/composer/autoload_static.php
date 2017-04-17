@@ -21,6 +21,7 @@ class ComposerStaticInit2c884cc51358d9f934ec504e1a98c3c1
         '58571171fd5812e6e447dce228f52f4d' => __DIR__ . '/..' . '/laravel/framework/src/Illuminate/Support/helpers.php',
         'f18cc91337d49233e5754e93f3ed9ec3' => __DIR__ . '/..' . '/laravelcollective/html/src/helpers.php',
         'e23faeee409e941dc9b4c80386209c39' => __DIR__ . '/..' . '/laracasts/flash/src/Laracasts/Flash/functions.php',
+        'defc29156abd89691f1e8d81fb0bf481' => __DIR__ . '/../..' . '/app/Classes/EmbedYoutubeLiveStreaming.php',
     );
 
     public static $prefixLengthsPsr4 = array (
@@ -349,6 +350,7 @@ class ComposerStaticInit2c884cc51358d9f934ec504e1a98c3c1
         'CreatePasswordResetsTable' => __DIR__ . '/../..' . '/database/migrations/2014_10_12_100000_create_password_resets_table.php',
         'CreatePermissionsTable' => __DIR__ . '/../..' . '/database/migrations/2017_04_08_190611_create_permissions_table.php',
         'CreatePlaylistsTable' => __DIR__ . '/../..' . '/database/migrations/2017_03_28_154136_create_playlists_table.php',
+        'CreateSettingsTable' => __DIR__ . '/../..' . '/database/migrations/2017_04_17_083656_create_settings_table.php',
         'CreateStarVideoTable' => __DIR__ . '/../..' . '/database/migrations/2017_04_16_150047_create_starVideo_table.php',
         'CreateTagVideoTable' => __DIR__ . '/../..' . '/database/migrations/2017_03_20_152910_create_tag_video_table.php',
         'CreateTagsTable' => __DIR__ . '/../..' . '/database/migrations/2017_03_20_152642_create_tags_table.php',

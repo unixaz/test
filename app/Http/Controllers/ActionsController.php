@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Comment;
 use App\Info;
 use App\Permission;
+use App\Setting;
 use App\StarVideo;
 use App\Tag;
 use App\User;
@@ -15,14 +16,26 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redirect;
+use App\Classes\EmbedYoutubeLiveStreaming;
 
 class ActionsController extends Controller
 {
 
     public function index()
     {
+// https://github.com/iacchus/youtube-live-embed
+        $channelId = "UCA8Yq2Y_gQiwNDHP49KOmFg";
+        $api_key = "AIzaSyAJfEeIKCLOu7fwML4ido5uxpAv_aXtpFA";
+        $YouTubeLive = new EmbedYoutubeLiveStreaming($channelId,$api_key);
+        $streaming = '';
+        if($YouTubeLive->isLive)
+        {
+            $streaming = $YouTubeLive;
+        }
+
         $info = Info::all();
-        return view('home', compact('info'));
+        $settings = Setting::first();
+        return view('home', compact('info','settings', 'streaming'));
     }
 
     public function writeNews()
@@ -916,6 +929,23 @@ foreach ($request['ch'] as $selectedVideo) {
             flash('Nerasta video pagal raktažodį', 'danger');
             return Redirect::back();
         }
+
+    }
+
+    public function toggleStreaming()
+    {
+        $settings = Setting::first();
+
+        if ($settings->streaming == false)
+        {
+            $settings->streaming = true;
+            $settings->save();
+        }elseif ($settings->streaming == true){
+            $settings->streaming = false;
+            $settings->save();
+        }
+
+        return redirect('/');
 
     }
 

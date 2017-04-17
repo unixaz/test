@@ -16,26 +16,6 @@
     <!-- Custom Fonts -->
     <link href="{{ asset('vendor/font-awesome/css/font-awesome.min.css') }}" rel="stylesheet">
 
-   <!-- Bootstrap Core CSS
-   <link href="{{ asset('vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">-->
-
-  {{-- <!-- MetisMenu CSS -->
-   <link href="{{ asset('vendor/metisMenu/metisMenu.min.css') }}" rel="stylesheet">
-
-   <!-- Custom CSS -->
-   <link href="{{ asset('dist/css/sb-admin-2.css') }}" rel="stylesheet">
-
-   <!-- Morris Charts CSS -->
-   <link href="{{ asset('vendor/morrisjs/morris.css') }}" rel="stylesheet">
-
-   <!-- Custom Fonts -->
-   <link href="{{ asset('vendor/font-awesome/css/font-awesome.min.css') }}" rel="stylesheet">
-
-    <link href="{{ asset('css/custom.css') }}" rel="stylesheet">--}}
-
-
-
-
     <!-- Scripts -->
     <script>
         window.Laravel = {!! json_encode([
@@ -106,10 +86,7 @@
             </div>
         </nav>
 
-
-
         <script src="/bakalauras/public/{{ mix('js/app.js') }}"></script>
-
 
         @yield('content')
 
@@ -120,17 +97,6 @@
         </footer>
 
     </div>
-
-   <!-- Scripts -->
-
-
-
-    <!-- Metis Menu Plugin JavaScript -->
-    <script src="{{ asset('vendor/metisMenu/metisMenu.min.js') }}"></script>
-
-    <!-- Custom Theme JavaScript -->
-    <script src="{{ asset('dist/js/sb-admin-2.js') }}"></script>
-
 
 </body>
 </html>

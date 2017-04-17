@@ -41,11 +41,26 @@
                             </button>
                         @endif
 
+                        <a href="#" class="btn btn-primary btn-facebook btn-sm pull-right"
+                           onclick="
+                                   window.open(
+                                   'https://www.facebook.com/dialog/feed?app_id=1051058548338525' +
+                                   '&link={{ Request::fullUrl() }}' +
+                                   '&picture={{ asset('images/su_logo.jpg') }}' +
+                                   '&caption=^Šiaulių%20universitetas' +
+                                   '&description={{ $videos['title'] }}',
+                                   'facebook-share-dialog',
+                                   'width=626,height=436');
+                                   return false;">
+                            <i class="fa fa-facebook fa-fw"></i>Dalintis
+                        </a>
+
                         @unless (Auth::guest())
                             @if (Auth::user()->isAdmin())
                                 <a href="{{ url('updateVideoInfo/' . $videos['id']) }}" class="btn btn-info btn-sm pull-right" role="button">Redaguoti info</a>
                             @endif
                         @endunless
+
                         <hr>
 
                         @if(!Auth::guest())
