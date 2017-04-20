@@ -13,7 +13,7 @@ class Video extends Model
      * @var array
      */
     protected $fillable = [
-        'title', 'description', 'video_id', 'user_id', 'playlist_id', 'order_in_playlist', 'privacy',
+        'title', 'description', 'video_id', 'user_id', 'playlist_id', 'order_in_playlist', 'privacy', 'difficulty',
     ];
 
     public function tags()

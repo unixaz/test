@@ -14,7 +14,6 @@ use App\Playlist;
 use App\VideosInPlaylist;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redirect;
 use App\Classes\EmbedYoutubeLiveStreaming;
 
@@ -142,7 +141,8 @@ class ActionsController extends Controller
             'description'  => $request->get('description'),
             'video_id'  => $values,
             'user_id'  => $request->get('professor'),
-            'privacy' => 'public'
+            'privacy' => 'public',
+            'difficulty' => $request->get('difficulty')
         ]);
 
         if($video)
@@ -169,7 +169,9 @@ class ActionsController extends Controller
     {
         $videos = Video::where('user_id',Auth::id())
             ->get();
-        return view('videoList', compact('videos'));
+
+        $useFilter = true;
+        return view('videoList', compact('videos', 'useFilter'));
     }
 
     public function upload()
@@ -348,8 +350,8 @@ foreach ($request['ch'] as $selectedVideo) {
             }
 
         }
-
-        return view('videoList', compact('videos'));
+        $useFilter = true;
+        return view('videoList', compact('videos', 'useFilter'));
 
     }
 
@@ -368,7 +370,7 @@ foreach ($request['ch'] as $selectedVideo) {
 
     public function watchVideo($id)
     {
-        $videos = Video::findOrFail($id);
+        $videos = Video::with('tags')->where('id', $id)->first();
         $star = StarVideo::where('user_id', Auth::id())->where('video_id', $id)->first();
         $count = StarVideo::where(['video_id' => $id])->count();
 
@@ -878,6 +880,12 @@ foreach ($request['ch'] as $selectedVideo) {
 
     public function searchByDifficulty(Request $request)
     {
+        $this->validate(
+            $request,
+            ['difficulty' => 'required'],
+            ['difficulty.required' => 'Nenurodytas sudėtingumas']
+        );
+
         $allVideos = Video::where('difficulty', $request->difficulty)->get();
         $videos = array();
         foreach ($allVideos as $allVideo) {
@@ -892,8 +900,8 @@ foreach ($request['ch'] as $selectedVideo) {
             }
 
         }
-
-        return view('videoList', compact('videos'));
+        $useFilter = false;
+        return view('videoList', compact('videos', 'useFilter'));
 
     }
 
@@ -906,7 +914,7 @@ foreach ($request['ch'] as $selectedVideo) {
         );
 
         $tag = Tag::with('videos')->where('name', $request->tag)->first();
-
+        $useFilter = false;
         if ($tag)
         {
             $allVideos = $tag->videos;
@@ -923,8 +931,8 @@ foreach ($request['ch'] as $selectedVideo) {
                 }
 
             }
-
-            return view('videoList', compact('videos'));
+            $useFilter = false;
+            return view('videoList', compact('videos', 'useFilter'));
         }else{
             flash('Nerasta video pagal raktažodį', 'danger');
             return Redirect::back();

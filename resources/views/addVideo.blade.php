@@ -19,12 +19,25 @@
                     {!! Form::open(['url' => '/addVideo', 'class' => 'form-horizontal']) !!}
 
                         <div class="form-group">
-                            <label for="professor" class="col-lg-2 control-label">Naujas savininkas</label>
+                            <label for="professor" class="col-lg-2 control-label">Savininkas</label>
                             <div class="col-lg-10">
                                 <select name="professor" class="form-control">
                                     @foreach ($users as $user)
                                         <option value="{{ $user->id }}">{{ $user->name }}</option>
                                     @endforeach
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="difficulty" class="col-lg-2 control-label">Sudėtingumas:</label>
+                            <div class="col-lg-10">
+                                <select name="difficulty" class="form-control">
+                                    <option value="1">Labai lengvas</option>
+                                    <option value="2">Lengvas</option>
+                                    <option value="3">Vidutinis</option>
+                                    <option value="4">Sudėtingas</option>
+                                    <option value="5">Labai sudėtingas</option>
                                 </select>
                             </div>
                         </div>

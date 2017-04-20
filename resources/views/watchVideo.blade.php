@@ -30,6 +30,12 @@
                             Labai sunkus
                         @endif
                         </small>
+<br>
+                        Raktažodžiai:
+                        @foreach($videos->tags as $tags)
+                          {{ $tags->name }}
+
+                        @endforeach
 
                         @if (isset($star) || Auth::guest())
                             <button type="button" class="btn btn-default btn-sm pull-right" disabled>

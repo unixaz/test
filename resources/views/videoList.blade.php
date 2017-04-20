@@ -16,9 +16,11 @@
                         @include('flash::message')
                         @include('errors')
 
+                        @if (isset($useFilter) && $useFilter == true)
                         <div id="showmenu">
                             <button type="button" class="btn btn-primary btn-xs glyphicon glyphicon-triangle-bottom"> Filtruoti</button>
                         </div>
+                        @endif
 
                         <div class="menu" style="display: none;">
                             {!! Form::open(['url' => '/searchByDifficulty', 'class' => 'form-inline']) !!}
@@ -47,7 +49,7 @@
                         </div>
 <hr>
                         <div class="row">
-
+                            @if (!empty($videos))
                             @foreach ($videos as $key => $video)
 
                                     <div class="col-lg-2 col-sm-3 col-xs-4">
@@ -62,7 +64,7 @@
                                     </div>
 
                             @endforeach
-
+                            @endif
                         </div>
                     </div>
                 </div>
