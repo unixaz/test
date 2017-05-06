@@ -17,7 +17,7 @@ class CreateVideosTable extends Migration
             $table->increments('id');
             $table->integer('user_id');
             $table->string('title');
-            $table->string('description');
+            $table->string('description', 500);
             $table->integer('difficulty');
 			$table->string('video_id');
             $table->string('privacy');

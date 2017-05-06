@@ -17,15 +17,17 @@
                 <li class="dropdown">
                     <a class="dropdown-toggle" data-toggle="dropdown" href="#">
                         <i class="fa fa-youtube-play fa-fw"></i>
-                        Video nustatymai
+                        Vaizdo įrašų nustatymai
                         <span class="caret"></span>
                     </a>
                     <ul class="dropdown-menu">
-                        <li><a href="{{ url('upload') }}"> Įkelti video</a></li>
-                        <li><a href="{{ url('addVideo') }}"> Pridėti video</a></li>
-                        <li><a href="{{ url('changeOwner') }}"> Keisti video savininką</a></li>
+                        <li><a href="{{ url('upload') }}"> Įkelti viešą vaizdo įrašą</a></li>
+                        <li><a href="{{ url('uploadPrivate') }}"> Įkelti privatų vaizdo įrašą</a></li>
+                        <li><a href="{{ url('addVideo') }}"> Pridėti viešą vaizdo įrašą</a></li>
+                        <li><a href="{{ url('changeOwner') }}"> Keisti vaizdo įrašo savininką</a></li>
                         <li class="divider"></li>
-                        <li><a href="{{ url('deleteVideo') }}"> Trinti video</a></li>
+                        <li><a href="{{ url('deleteVideo') }}"> Trinti viešą vaizdo įrašą</a></li>
+                        <li><a href="{{ url('deletePrivateVideo') }}"> Trinti privatų vaizdo įrašą</a></li>
                     </ul>
                 </li>
                 <li>
@@ -39,20 +41,23 @@
             @if (Auth::user()->isAdminOrProfessor())
 
                 <li>
-                    <a href="{{ url('myVideos') }}"><i class="fa fa-youtube-play fa-fw"></i> Mano video</a>
+                    <a href="{{ url('myVideos') }}"><i class="fa fa-youtube-play fa-fw"></i> Mano vaizdo įrašai</a>
+                </li>
+                <li>
+                    <a href="{{ url('videoPermissions') }}"><i class="fa fa-lock fa-fw"></i> Privačių vaizdo įrašų teisės</a>
                 </li>
 
-                <li class="dropdown">
+                {{--<li class="dropdown">
                     <a class="dropdown-toggle" data-toggle="dropdown" href="#">
                         <i class="fa fa-lock fa-fw"></i>
-                        Video privatumas
+                        Vaizdo įrašų privatumas
                         <span class="caret"></span>
                     </a>
                     <ul class="dropdown-menu">
-                        <li><a href="{{ url('changePrivacy') }}"> Keisti video privatumą</a></li>
-                        <li><a href="{{ url('videoPermissions') }}"> Privačių video teisės</a></li>
+                        <li><a href="{{ url('changePrivacy') }}"> Keisti vaizdo įrašo privatumą</a></li>
+                        <li><a href="{{ url('videoPermissions') }}"> Privačių vaizdo įrašų teisės</a></li>
                     </ul>
-                </li>
+                </li>--}}
 
                 <li class="dropdown">
                     <a class="dropdown-toggle" data-toggle="dropdown" href="#">

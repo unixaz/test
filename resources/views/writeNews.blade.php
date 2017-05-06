@@ -33,7 +33,6 @@
                                 <label for="content" class="col-lg-2 control-label">Naujiena</label>
                                 <div class="col-lg-10">
                                     <textarea class="form-control" name="content" id="input" rows="5"></textarea>
-                                    <span class="help-block">Šiame lauke galite rašyti naujieną.</span>
                                     <div id="character_count"></div>
                                 </div>
 

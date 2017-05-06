@@ -12,7 +12,15 @@
                 <div class="panel panel-default">
                     <div class="panel-heading"><a href="{{ url()->previous() }}" class="btn btn-primary btn-sm" role="button">Atgal</a></div>
                     <div class="panel-body">
-                        <iframe class="center-block" width="45%" height="315" src="https://www.youtube.com/embed/{{ $videos['video_id'] }}" frameborder="0" allowfullscreen=""></iframe>
+                        @if (strpos($videos['video_id'], "."))
+                            <video class="center-block" width="45%" height="315" controls controlsList="nodownload">
+                                <source src="{{ route('watchPrivate', $videos['video_id'])  }}" type="video/mp4">
+                                Jūsų naršyklė nepalaiko vaizdo įrašų žymės.
+                            </video>
+                        @else
+                            <iframe class="center-block" width="45%" height="315" src="https://www.youtube.com/embed/{{ $videos['video_id'] }}" frameborder="0" allowfullscreen=""></iframe>
+                        @endif
+
                         <b>{{ $videos['title'] }}</b>
                         <br>
                         {{ $videos['description'] }}
@@ -29,7 +37,6 @@
                         @elseif ($videos['difficulty'] == 5)
                             Labai sunkus
                         @endif
-                        </small>
 <br>
                         Raktažodžiai:
                         @foreach($videos->tags as $tags)
@@ -46,11 +53,11 @@
                                 <span class="glyphicon glyphicon-star-empty"></span> ({{ $count }}) Patinka
                             </button>
                         @endif
-
+                        </small>
                         <a href="#" class="btn btn-primary btn-facebook btn-sm pull-right"
                            onclick="
                                    window.open(
-                                   'https://www.facebook.com/dialog/feed?app_id=1051058548338525' +
+                                   'https://www.facebook.com/dialog/feed?app_id={{ env('FACEBOOK_API') }}' +
                                    '&link={{ Request::fullUrl() }}' +
                                    '&picture={{ asset('images/su_logo.jpg') }}' +
                                    '&caption=^Šiaulių%20universitetas' +
@@ -78,7 +85,6 @@
                             <label for="comment" class="col-lg-1 control-label">Komentaras</label>
                             <div class="col-lg-9">
                                 <textarea class="form-control" name="comment" id="input" rows="3"></textarea>
-                                <span class="help-block">Šiame lauke galite rašyti naujieną.</span>
                             </div>
                             <div class="col-lg-1">
                                 <button type="submit" class="btn btn-primary">Komentuoti</button>

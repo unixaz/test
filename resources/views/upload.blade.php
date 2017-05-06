@@ -71,7 +71,7 @@
                             <span
                                     class="g-signin"
                                     data-callback="signinCallback"
-                                    data-clientid="733664914176-av3k29o10v3d07n7dvr7bt4nic7mn3p3.apps.googleusercontent.com"
+                                    data-clientid="{{ env('GOOGLE_CLIENT_ID') }}"
                                     data-cookiepolicy="single_host_origin"
                                     data-scope="https://www.googleapis.com/auth/youtube.upload https://www.googleapis.com/auth/youtube">
                             </span>

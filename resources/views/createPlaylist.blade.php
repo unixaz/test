@@ -53,7 +53,6 @@
                                 <label for="content" class="col-lg-2 control-label">Aprašymas</label>
                                 <div class="col-lg-10">
                                     <textarea class="form-control" name="description" id="input" rows="5" required></textarea>
-                                    <span class="help-block">Šiame lauke galite rašyti naujieną.</span>
                                 </div>
                             </div>
 

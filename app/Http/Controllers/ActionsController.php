@@ -13,9 +13,14 @@ use App\Video;
 use App\Playlist;
 use App\VideosInPlaylist;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Redirect;
 use App\Classes\EmbedYoutubeLiveStreaming;
+use Illuminate\Support\Facades\Storage;
+
 
 class ActionsController extends Controller
 {
@@ -83,6 +88,7 @@ class ActionsController extends Controller
         }elseif ($action == 'del')
         {
             $user->delete();
+
         }
 
         flash('Sėkmingai įvykdyta', 'success');
@@ -186,16 +192,12 @@ class ActionsController extends Controller
     public function upload_data(Request $request)
     {
 
-        $data = $request->all();
-
         $video = Video::create([
             'title' => $request->get('title'),
             'description'  => $request->get('description'),
             'difficulty'  => $request->get('difficulty'),
             'video_id'  => $request->get('video_id'),
             'user_id'  => $request->get('user_id'),
-            'playlist_id'  => 0,
-            'order_in_playlist' => 0,
             'privacy'  => $request->get('privacy')
         ]);
 
@@ -411,6 +413,10 @@ foreach ($request['ch'] as $selectedVideo) {
         }elseif ($video->privacy == 'unlisted'){
             $permission = Permission::where('user_id', Auth::id())
                 ->where('video_id', $id)->first();
+            if ($video->user_id == Auth::id())
+            {
+                $permission = true;
+            }
             if ($permission)
             {
                 $comments = new Comment;
@@ -494,7 +500,7 @@ foreach ($request['ch'] as $selectedVideo) {
 
     public function deleteVideo()
     {
-        $videos = Video::with('users')->get();
+        $videos = Video::with('users')->where('privacy', 'public')->get();
 
         return view('deleteVideo', compact('videos'));
 
@@ -512,6 +518,15 @@ foreach ($request['ch'] as $selectedVideo) {
 
         foreach ($request['ch'] as $selectedVideo) {
             Comment::where('video_id', $selectedVideo)->delete();
+        }
+        foreach ($request['ch'] as $selectedVideo) {
+            Permission::where('video_id', $selectedVideo)->delete();
+        }
+        foreach ($request['ch'] as $selectedVideo) {
+            StarVideo::where('video_id', $selectedVideo)->delete();
+        }
+        foreach ($request['ch'] as $selectedVideo) {
+            VideosInPlaylist::where('video_id', $selectedVideo)->delete();
         }
 
         flash('Sėkmingai įvykdyta', 'success');
@@ -931,12 +946,48 @@ foreach ($request['ch'] as $selectedVideo) {
                 }
 
             }
-            $useFilter = false;
             return view('videoList', compact('videos', 'useFilter'));
         }else{
             flash('Nerasta video pagal raktažodį', 'danger');
             return Redirect::back();
         }
+
+    }
+
+    public function sortByLikes()
+    {
+        $starVideos = StarVideo::select('video_id')->groupBy('video_id')->get();
+
+        $videosWithStars = array();
+        foreach ($starVideos as $starVideo)
+        {
+            $videosWithStars[$starVideo->video_id] = StarVideo::where(['video_id' => $starVideo->video_id])->count();
+        }
+        arsort($videosWithStars);
+
+        $videosWithStars2 = array();
+        $starCount = array();
+        foreach ($videosWithStars as $key => $videosWithStar) {
+
+            $videosWithStars2[] = Video::where(['id' => $key])->first();
+            $starCount[] = $videosWithStar;
+        }
+
+            $allVideos = $videosWithStars2;
+            $videos = array();
+            foreach ($allVideos as $allVideo) {
+
+                if ($allVideo['privacy'] == 'public')
+                {
+                    $videos[] = $allVideo;
+                }elseif ($allVideo['privacy'] == 'unlisted' && !Auth::guest()){
+                    if (Permission::where('user_id', Auth::id())->where('video_id', $allVideo->id)->first()) {
+                        $videos[] = $allVideo;
+                    }
+                }
+
+            }
+            return view('videoList', compact('videos', 'useFilter', 'starCount'));
 
     }
 
@@ -956,5 +1007,138 @@ foreach ($request['ch'] as $selectedVideo) {
         return redirect('/');
 
     }
+
+    public function uploadPrivate()
+    {
+
+        $users = User::where('confirmed', true)
+            ->whereIn('role', [1,2])
+            ->get();
+
+        return view('uploadPrivate', compact('users'));
+    }
+
+    public function uploadPrivate2(Request $request)
+    {
+        $this->validate(
+            $request,
+            ['title' => 'required'],
+            ['title.required' => 'Nenurodytas pavadinimas']
+        );
+
+        $this->validate(
+            $request,
+            ['tags' => 'required'],
+            ['tags.required' => 'Nenurodyti raktažodžiai']
+        );
+
+        $this->validate(
+            $request,
+            ['description' => 'required'],
+            ['description.required' => 'Nenurodytas aprašymas']
+        );
+        $this->validate(
+            $request,
+            ['file' => 'required'],
+            ['file.required' => 'Nepasirinktas failas']
+        );
+
+        $request->file('file')->store('uploads');
+
+        $video = Video::create([
+            'title' => $request->get('title'),
+            'description'  => $request->get('description'),
+            'difficulty'  => $request->get('difficulty'),
+            'video_id'  => $request->file->hashName(),
+            'user_id'  => Auth::id(),
+            'privacy'  => 'unlisted'
+        ]);
+
+        if($video)
+        {
+            $tagNames = explode(',', $request->get('tags'));
+            $tagIds = [];
+            foreach($tagNames as $tagName)
+            {
+                //$post->tags()->create(['name'=>$tagName]);
+                //Or to take care of avoiding duplication of Tag
+                //you could substitute the above line as
+                $tag = Tag::firstOrCreate(['name'=>$tagName]);
+                if($tag)
+                {
+                    $tagIds[] = $tag->id;
+                }
+
+            }
+            $video->tags()->sync($tagIds);
+        }
+
+        return back();
+    }
+
+    public function watchPrivate($filename)
+    {
+        $video = Video::where('video_id', $filename)->first();
+
+        if (Auth::guest())
+        {
+            $permission = false;
+        }elseif (Auth::user())
+        {
+            if ($video->user_id == Auth::id()){
+                $permission = true;
+            }else{
+                $permissions = Permission::where('user_id', Auth::id())
+                    ->where('video_id', $video->id)->first();
+                if ($permissions){
+                    $permission = true;
+                }else{
+                    $permission = false;
+                }
+            }
+        }
+
+        if (file_exists($filePath = storage_path() ."/app/uploads/".$filename) && $permission) {
+            $stream = new \App\Http\VideoStream($filePath);
+            return response()->stream(function() use ($stream) {
+                $stream->start();
+            });
+        }
+        return redirect('/');
+    }
+
+    public function deletePrivateVideo()
+    {
+        $videos = Video::with('users')->where('privacy', 'unlisted')->get();
+        return view('deletePrivateVideo', compact('videos'));
+
+    }
+
+    public function deletePrivateVideo2(Request $request)
+    {
+        $this->validate(
+            $request,
+            ['ch' => 'required'],
+            ['ch.required' => 'Nepasirinkti video']
+        );
+
+        foreach ($request['ch'] as $selectedVideo) {
+            $video = Video::where('id', $selectedVideo)->first();
+            Storage::delete('/uploads/' . $video->video_id);
+            Permission::where('video_id', $selectedVideo)->delete();
+            Comment::where('video_id', $selectedVideo)->delete();
+            StarVideo::where('video_id', $selectedVideo)->delete();
+            VideosInPlaylist::where('video_id', $selectedVideo)->delete();
+        }
+        Video::destroy($request['ch']);
+
+        flash('Sėkmingai įvykdyta', 'success');
+        return redirect('/deletePrivateVideo');
+    }
+
+
+
+
+
 
 }

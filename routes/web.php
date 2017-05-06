@@ -11,6 +11,9 @@
 |
 */
 
+use App\Http\VideoStream;
+
+
 Auth::routes();
 
 Route::group(['middleware' => ['admin']], function () {
@@ -23,6 +26,9 @@ Route::group(['middleware' => ['admin']], function () {
 
     Route::get('/deleteVideo', 'ActionsController@deleteVideo');
     Route::post('/deleteVideo', 'ActionsController@deleteVideo2');
+
+    Route::get('/deletePrivateVideo', 'ActionsController@deletePrivateVideo');
+    Route::post('/deletePrivateVideo', 'ActionsController@deletePrivateVideo2');
 
     Route::get('/upload', 'ActionsController@upload');
     Route::post('/upload_data', 'ActionsController@upload_data');
@@ -43,6 +49,9 @@ Route::group(['middleware' => ['admin']], function () {
     Route::post('/updateVideoInfo2/{id}', 'ActionsController@updateVideoInfo2');
 
     Route::get('/toggleStreaming', 'ActionsController@toggleStreaming');
+
+    Route::get('/uploadPrivate', 'ActionsController@uploadPrivate');
+    Route::post('/uploadPrivate2', 'ActionsController@uploadPrivate2');
 });
 
 Route::group(['middleware' => ['admin_professor']], function () {
@@ -90,4 +99,6 @@ Route::group(['middleware' => ['confirmed_user']], function () {
     Route::get('/professorsList2/{id}', 'ActionsController@professorsList2');
     Route::post('/searchByDifficulty', 'ActionsController@searchByDifficulty');
     Route::post('/searchByTag', 'ActionsController@searchByTag');
+    Route::get('/sortByLikes', 'ActionsController@sortByLikes');
+    Route::get('/privateVideo/{filename}', 'ActionsController@watchPrivate')->name('watchPrivate');
 

@@ -48,7 +48,7 @@
                 <div class="collapse navbar-collapse" id="app-navbar-collapse">
                     <!-- Left Side Of Navbar -->
                     <ul class="nav navbar-nav">
-                        <li><a href="{{ url('videoList') }}">Video</a></li>
+                        <li><a href="{{ url('videoList') }}">Vaizdo įrašai</a></li>
                         <li><a href="{{ url('playlistList') }}">Grojaraščiai</a></li>
                         <li><a href="{{ url('professorsList') }}">Dėstytojai</a></li>
 
@@ -93,7 +93,7 @@
         <hr>
 
         <footer>
-            <p>© 2017 Šiauių universitetas</p>
+            <p>© 2017 Šiaulių universitetas</p>
         </footer>
 
     </div>

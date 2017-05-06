@@ -46,8 +46,13 @@
                             </div>
                             <button type="submit" class="btn btn-primary">Filtruoti</button>
                             {!! Form::close()  !!}
+                            <br>
+                            <a href="{{ url('sortByLikes') }}" class="btn btn-primary" role="button">Rodyti mėgstamiausius</a>
+
                         </div>
+
 <hr>
+
                         <div class="row">
                             @if (!empty($videos))
                             @foreach ($videos as $key => $video)
@@ -55,9 +60,17 @@
                                     <div class="col-lg-2 col-sm-3 col-xs-4">
                                         <div class="thumbnail">
                                             <a href="{{ url('watch/' . $video['id']) }}">
+                                                @if (strpos($video['video_id'], "."))
+                                                    <img src="{{ url('/images/lock.jpg') }}" class="img-responsive">
+                                                @else
                                                 <img src="http://img.youtube.com/vi/{{ $video['video_id'] }}/default.jpg" class="img-responsive">
+                                                @endif
                                                 <div class="caption">
-                                                    <p>{{ $video['title'] }}</p>
+                                                    {{ $video['title'] }}
+                                                    @if (!empty($starCount))
+                                                    <br>
+                                                    <small>Patinka: {{ $starCount[$key] }}</small>
+                                                    @endif
                                                 </div>
                                             </a>
                                         </div>

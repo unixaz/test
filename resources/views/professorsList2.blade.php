@@ -14,7 +14,7 @@
                     <div class="panel-body">
 
                         <ul class="nav nav-tabs">
-                            <li class="active"><a href="#video" data-toggle="tab" aria-expanded="true">Video</a></li>
+                            <li class="active"><a href="#video" data-toggle="tab" aria-expanded="true">Vaizdo įrašai</a></li>
                             <li class=""><a href="#playlists" data-toggle="tab" aria-expanded="false">Grojaraščiai</a></li>
                         </ul>
                         <div id="myTabContent" class="tab-content">
