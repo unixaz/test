@@ -10,7 +10,7 @@
             <div class="col-xs-12 col-sm-9">
 
                 <div class="panel panel-default">
-                    <div class="panel-heading"><b>Priskirti video grojaraščiui</b></div>
+                    <div class="panel-heading"><b>Priskirti vaizdo įrašą grojaraščiui</b></div>
                     <div class="panel-body">
 
                         @include('flash::message')

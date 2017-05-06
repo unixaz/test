@@ -62,7 +62,7 @@
                                                 <i class="fa fa-comment fa-fw"></i> {{ $playlist->title }}
                                                 <br>
                                                 {!! $playlist->description !!}
-                                                <span class="pull-right text-muted small"><em>{{ $videosCount[$key] }} video</em></span>
+                                                <span class="pull-right text-muted small"><em>{{ $videosCount[$key] }} vaizdo įrašų</em></span>
                                                 <br>
                                             </a>
                                         @endif

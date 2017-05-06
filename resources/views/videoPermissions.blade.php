@@ -10,11 +10,11 @@
             <div class="col-xs-12 col-sm-9">
 
                 <div class="panel panel-default">
-                    <div class="panel-heading"><b>Privačių video teisės</b></div>
+                    <div class="panel-heading"><b>Privačių vaizdo įrašų teisės</b></div>
                     <div class="panel-body">
 
                             <div class="form-group">
-                                <label for="title" class="col-lg-2 control-label">Jūsų privatūs video</label>
+                                <label for="title" class="col-lg-2 control-label">Jūsų privatūs vaizdo įrašai</label>
                                 <div class="col-lg-10">
                                     <table class="table table-bordered">
                                         <thead>

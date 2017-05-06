@@ -10,7 +10,7 @@
             <div class="col-xs-12 col-sm-9">
 
                 <div class="panel panel-default">
-                    <div class="panel-heading"><b>Pašalinti video iš grojaraščio</b></div>
+                    <div class="panel-heading"><b>Pašalinti vaizdo įrašus iš grojaraščio</b></div>
                     <div class="panel-body">
 
                         @include('flash::message')
@@ -20,9 +20,8 @@
                         <fieldset>
 
                             <div class="form-group">
-                                <label for="title" class="col-lg-2 control-label">Video grojaraštyje</label>
+                                <label for="title" class="col-lg-2 control-label">Vaizdo įrašai grojaraštyje</label>
                                 <div class="col-lg-10">
-                                    Pasirinkite kokius video norite pašalinti iš grojaraščio "{{ $playlist->title }}"
                                     <table class="table table-bordered">
                                         <thead>
                                         <tr>
@@ -43,7 +42,7 @@
                             <div class="form-group">
                                 <div class="col-lg-10 col-lg-offset-2">
                                     <button type="reset" class="btn btn-default">Išvalyti formą</button>
-                                    <button type="submit" class="btn btn-primary">Ištrinti iš grojaraščio</button>
+                                    <button type="submit" class="btn btn-primary">Šalinti iš grojaraščio</button>
                                 </div>
                             </div>
 

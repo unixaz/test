@@ -20,5 +20,4 @@ return array(
     'e23faeee409e941dc9b4c80386209c39' => $vendorDir . '/laracasts/flash/src/Laracasts/Flash/functions.php',
     'f0906e6318348a765ffb6eb24e0d0938' => $vendorDir . '/laravel/framework/src/Illuminate/Foundation/helpers.php',
     '58571171fd5812e6e447dce228f52f4d' => $vendorDir . '/laravel/framework/src/Illuminate/Support/helpers.php',
-    'defc29156abd89691f1e8d81fb0bf481' => $baseDir . '/app/Classes/EmbedYoutubeLiveStreaming.php',
 );

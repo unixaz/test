@@ -27,7 +27,6 @@
             "App\\": "app/"
         },
         "files": [
-            "app/Classes/EmbedYoutubeLiveStreaming.php"
         ]
     },
     "autoload-dev": {

@@ -11,9 +11,6 @@
 |
 */
 
-use App\Http\VideoStream;
-
-
 Auth::routes();
 
 Route::group(['middleware' => ['admin']], function () {

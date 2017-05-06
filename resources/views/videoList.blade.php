@@ -47,7 +47,7 @@
                             <button type="submit" class="btn btn-primary">Filtruoti</button>
                             {!! Form::close()  !!}
                             <br>
-                            <a href="{{ url('sortByLikes') }}" class="btn btn-primary" role="button">Rodyti mėgstamiausius</a>
+                            <a href="{{ url('sortByLikes') }}" class="btn btn-primary" role="button">Rūšiuoti pagal patinkamumą</a>
 
                         </div>
 

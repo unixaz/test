@@ -6,7 +6,6 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
-    'App\\Classes\\EmbedYoutubeLiveStreaming' => $baseDir . '/app/Classes/EmbedYoutubeLiveStreaming.php',
     'App\\Comment' => $baseDir . '/app/Comment.php',
     'App\\Console\\Kernel' => $baseDir . '/app/Console/Kernel.php',
     'App\\Exceptions\\Handler' => $baseDir . '/app/Exceptions/Handler.php',
@@ -25,6 +24,7 @@ return array(
     'App\\Http\\Middleware\\RedirectIfAuthenticated' => $baseDir . '/app/Http/Middleware/RedirectIfAuthenticated.php',
     'App\\Http\\Middleware\\TrimStrings' => $baseDir . '/app/Http/Middleware/TrimStrings.php',
     'App\\Http\\Middleware\\VerifyCsrfToken' => $baseDir . '/app/Http/Middleware/VerifyCsrfToken.php',
+    'App\\Http\\VideoStream' => $baseDir . '/app/Http/VideoStream.php',
     'App\\Info' => $baseDir . '/app/Info.php',
     'App\\Permission' => $baseDir . '/app/Permission.php',
     'App\\Playlist' => $baseDir . '/app/Playlist.php',
@@ -6409,6 +6409,7 @@ return array(
     'Illuminate\\Support\\Facades\\View' => $vendorDir . '/laravel/framework/src/Illuminate/Support/Facades/View.php',
     'Illuminate\\Support\\Fluent' => $vendorDir . '/laravel/framework/src/Illuminate/Support/Fluent.php',
     'Illuminate\\Support\\HigherOrderCollectionProxy' => $vendorDir . '/laravel/framework/src/Illuminate/Support/HigherOrderCollectionProxy.php',
+    'Illuminate\\Support\\HigherOrderTapProxy' => $vendorDir . '/laravel/framework/src/Illuminate/Support/HigherOrderTapProxy.php',
     'Illuminate\\Support\\HtmlString' => $vendorDir . '/laravel/framework/src/Illuminate/Support/HtmlString.php',
     'Illuminate\\Support\\Manager' => $vendorDir . '/laravel/framework/src/Illuminate/Support/Manager.php',
     'Illuminate\\Support\\MessageBag' => $vendorDir . '/laravel/framework/src/Illuminate/Support/MessageBag.php',
@@ -6499,6 +6500,7 @@ return array(
     'League\\Flysystem\\AdapterInterface' => $vendorDir . '/league/flysystem/src/AdapterInterface.php',
     'League\\Flysystem\\Adapter\\AbstractAdapter' => $vendorDir . '/league/flysystem/src/Adapter/AbstractAdapter.php',
     'League\\Flysystem\\Adapter\\AbstractFtpAdapter' => $vendorDir . '/league/flysystem/src/Adapter/AbstractFtpAdapter.php',
+    'League\\Flysystem\\Adapter\\CanOverwriteFiles' => $vendorDir . '/league/flysystem/src/Adapter/CanOverwriteFiles.php',
     'League\\Flysystem\\Adapter\\Ftp' => $vendorDir . '/league/flysystem/src/Adapter/Ftp.php',
     'League\\Flysystem\\Adapter\\Ftpd' => $vendorDir . '/league/flysystem/src/Adapter/Ftpd.php',
     'League\\Flysystem\\Adapter\\Local' => $vendorDir . '/league/flysystem/src/Adapter/Local.php',

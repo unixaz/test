@@ -13,11 +13,7 @@
                 <div class="panel panel-default">
                     <div class="panel-heading"><b>Tiesioginė transliacija</b></div>
                     <div class="panel-body">
-                        @if (!empty($streaming))
-                        {!! $streaming->embedCode() !!}
-                            @else
-                        Transliacija nevyksta
-                            @endif
+                        <iframe class="center-block" width="45%" height="315" src="https://www.youtube.com/embed/live_stream?channel={{ env('YOUTUBE_CHANNEL_ID') }}" frameborder="0" allowfullscreen=""></iframe>
                     </div>
                 </div>
                 @endif
@@ -50,6 +46,8 @@
                             @endunless
                             <hr>
                         @endforeach
+
+                        {{ $info->links() }}
 
                     </div>
                 </div>

@@ -10,7 +10,7 @@
             <div class="col-xs-12 col-sm-9">
 
                 <div class="panel panel-default">
-                    <div class="panel-heading"><b>Keisti video savininką</b></div>
+                    <div class="panel-heading"><b>Keisti vaizdo įrašo savininką</b></div>
                     <div class="panel-body">
 
                         @include('flash::message')
@@ -32,7 +32,7 @@
          </div>
 
          <div class="form-group">
-             <label for="title" class="col-lg-2 control-label">Video</label>
+             <label for="title" class="col-lg-2 control-label">Vaizdo įrašai</label>
              <div class="col-lg-10">
                  <table class="table table-bordered">
                      <thead>

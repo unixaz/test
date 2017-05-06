@@ -10,7 +10,7 @@
             <div class="col-xs-12 col-sm-9">
 
                 <div class="panel panel-default">
-                    <div class="panel-heading"><b>Trinti grojaraštį</b></div>
+                    <div class="panel-heading"><b>Šalinti grojaraštį</b></div>
                     <div class="panel-body">
 
                         @include('flash::message')
@@ -34,7 +34,7 @@
 
                             <div class="form-group">
                                 <div class="col-lg-10 col-lg-offset-2">
-                                    <button type="submit" class="btn btn-primary">Trinti grojaraštį</button>
+                                    <button type="submit" class="btn btn-primary">Šalinti grojaraštį</button>
                                 </div>
                             </div>
 

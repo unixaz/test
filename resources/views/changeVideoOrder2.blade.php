@@ -11,12 +11,12 @@
             <div class="col-xs-12 col-sm-9">
 
                 <div class="panel panel-default">
-                    <div class="panel-heading"><b>Keisti video pozicijas grojaraštyje</b></div>
+                    <div class="panel-heading"><b>Keisti vaizdo įrašų pozicijas grojaraštyje</b></div>
                     <div class="panel-body">
 
                         <div id="response"></div>
 
-                        <label for="playlist" class="col-lg-2 control-label">Jūsų video</label>
+                        <label for="playlist" class="col-lg-2 control-label">Jūsų vaizdo įrašai</label>
                         <div class="col-lg-10">
                             Paspauskite ant video elemento ir tempkite jį aukštyn/žemym norint keisti poziciją
                             <ul id="sortable">

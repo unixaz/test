@@ -54,6 +54,7 @@
                             </button>
                         @endif
                         </small>
+                            @if ($videos['privacy'] == 'public')
                         <a href="#" class="btn btn-primary btn-facebook btn-sm pull-right"
                            onclick="
                                    window.open(
@@ -67,6 +68,7 @@
                                    return false;">
                             <i class="fa fa-facebook fa-fw"></i>Dalintis
                         </a>
+                        @endif
 
                         @unless (Auth::guest())
                             @if (Auth::user()->isAdmin())

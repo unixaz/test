@@ -26,8 +26,8 @@
                         <li><a href="{{ url('addVideo') }}"> Pridėti viešą vaizdo įrašą</a></li>
                         <li><a href="{{ url('changeOwner') }}"> Keisti vaizdo įrašo savininką</a></li>
                         <li class="divider"></li>
-                        <li><a href="{{ url('deleteVideo') }}"> Trinti viešą vaizdo įrašą</a></li>
-                        <li><a href="{{ url('deletePrivateVideo') }}"> Trinti privatų vaizdo įrašą</a></li>
+                        <li><a href="{{ url('deleteVideo') }}"> Šalinti viešą vaizdo įrašą</a></li>
+                        <li><a href="{{ url('deletePrivateVideo') }}"> Šalinti privatų vaizdo įrašą</a></li>
                     </ul>
                 </li>
                 <li>
@@ -67,11 +67,11 @@
                     </a>
                     <ul class="dropdown-menu">
                         <li><a href="{{ url('createPlaylist') }}"> Kurti grojaraštį</a></li>
-                        <li><a href="{{ url('assignToPlaylist') }}"> Priskirti video grojaraščiui</a></li>
-                        <li><a href="{{ url('deleteFromPlaylist') }}"> Pašalinti video iš grojaraščio</a></li>
-                        <li><a href="{{ url('changeVideoOrder') }}"> Keisti video pozicijas grojaraštyje</a></li>
+                        <li><a href="{{ url('assignToPlaylist') }}"> Priskirti vaizdo įrašą grojaraščiui</a></li>
+                        <li><a href="{{ url('deleteFromPlaylist') }}"> Šalinti vaizdo įrašą iš grojaraščio</a></li>
+                        <li><a href="{{ url('changeVideoOrder') }}"> Keisti vaizdo įrašų pozicijas grojaraštyje</a></li>
                         <li class="divider"></li>
-                        <li><a href="{{ url('deletePlaylist') }}"> Trinti grojaraštį</a></li>
+                        <li><a href="{{ url('deletePlaylist') }}"> Šalinti grojaraštį</a></li>
                     </ul>
                 </li>
             @endif

@@ -40,7 +40,7 @@
                                         <td> {{ $user->email }}</td>
 
                                         <td><a href="{{ url('/confirmUser2/add',$user->id) }}" class="btn btn-success" role="button">Patvirtinti</a>
-                                            <a href="{{ url('/confirmUser2/del',$user->id) }}" class="btn btn-danger" role="button">Ištrinti</a>
+                                            <a href="{{ url('/confirmUser2/del',$user->id) }}" class="btn btn-danger" role="button">Šalinti</a>
                                         </td>
                                     </tr>
 

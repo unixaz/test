@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Comment;
+use App\Http\VideoStream;
 use App\Info;
 use App\Permission;
 use App\Setting;
@@ -13,12 +14,8 @@ use App\Video;
 use App\Playlist;
 use App\VideosInPlaylist;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Redirect;
-use App\Classes\EmbedYoutubeLiveStreaming;
 use Illuminate\Support\Facades\Storage;
 
 
@@ -27,19 +24,9 @@ class ActionsController extends Controller
 
     public function index()
     {
-// https://github.com/iacchus/youtube-live-embed
-        $channelId = "UCA8Yq2Y_gQiwNDHP49KOmFg";
-        $api_key = "AIzaSyAJfEeIKCLOu7fwML4ido5uxpAv_aXtpFA";
-        $YouTubeLive = new EmbedYoutubeLiveStreaming($channelId,$api_key);
-        $streaming = '';
-        if($YouTubeLive->isLive)
-        {
-            $streaming = $YouTubeLive;
-        }
-
-        $info = Info::all();
+        $info = Info::orderBy('id', 'DESC')->simplePaginate(10);
         $settings = Setting::first();
-        return view('home', compact('info','settings', 'streaming'));
+        return view('home', compact('info','settings'));
     }
 
     public function writeNews()
@@ -198,7 +185,7 @@ class ActionsController extends Controller
             'difficulty'  => $request->get('difficulty'),
             'video_id'  => $request->get('video_id'),
             'user_id'  => $request->get('user_id'),
-            'privacy'  => $request->get('privacy')
+            'privacy'  => 'public'
         ]);
 
         if($video)
@@ -1099,7 +1086,7 @@ foreach ($request['ch'] as $selectedVideo) {
         }
 
         if (file_exists($filePath = storage_path() ."/app/uploads/".$filename) && $permission) {
-            $stream = new \App\Http\VideoStream($filePath);
+            $stream = new VideoStream($filePath);
             return response()->stream(function() use ($stream) {
                 $stream->start();
             });

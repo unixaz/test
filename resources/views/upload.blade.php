@@ -62,7 +62,7 @@
             <div class="col-xs-12 col-sm-9">
 
                 <div class="panel panel-default">
-                    <div class="panel-heading"><b>Įkelti video</b></div>
+                    <div class="panel-heading"><b>Įkelti viešą vaizdo įrašą</b></div>
                     <div class="panel-body">
 
                         <span id="signinButton" class="pre-sign-in">
@@ -113,14 +113,6 @@
                             <div class="form-group">
                                 <label for="description">Aprašymas:</label>
                                 <textarea class="form-control" id="description" rows="3"></textarea>
-                            </div>
-                            <div class="form-group">
-                                <label for="privacy-status">Privatumas:</label>
-                                <select id="privacy-status" class="form-control">
-                                    <option value="public">Viešas (public)</option>
-                                    <option value="unlisted">Privatus (unlisted)</option>
-
-                                </select>
                             </div>
 
                             <div>
@@ -259,7 +251,7 @@
                 categoryId: this.categoryId
             },
             status: {
-                privacyStatus: document.getElementById("privacy-status").value
+                privacyStatus: 'public'
             }
         };
         var uploader = new MediaUploader({
@@ -318,12 +310,11 @@
                         description: document.getElementById("description").value,
                         video_id: this.videoId,
                         user_id: document.getElementById("role").value,
-                        privacy: document.getElementById("privacy-status").value,
                         difficulty: document.getElementById("difficulty").value
                     },
                     dataType: 'JSON',
                     success: function( msg ) {
-                        console.log('pavyko');
+
                     }
                 });
             }.bind(this)

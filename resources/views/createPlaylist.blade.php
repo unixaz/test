@@ -29,7 +29,7 @@
                             </div>
 
                             <div class="form-group">
-                                <label for="title" class="col-lg-2 control-label">Jūsų video</label>
+                                <label for="title" class="col-lg-2 control-label">Jūsų vaizdo įrašai</label>
                                 <div class="col-lg-10">
                                     <table class="table table-bordered">
                                         <thead>
