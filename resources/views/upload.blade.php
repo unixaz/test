@@ -119,7 +119,7 @@
                                 <label class="btn btn-default btn-file">
                                     <input type="file" id="file" accept="video/*" hidden>
                                 </label>
-                                <button id="button" type="button" class="btn btn-primary">Įkelti video</button>
+                                <button id="button" type="button" class="btn btn-primary">Įkelti vaizdo įrašą</button>
                                 <div class="during-upload">
                                     <p><span id="percent-transferred"></span>% įkelta (<span id="bytes-transferred"></span>/<span id="total-bytes"></span> baitų)</p>
                                     <progress id="upload-progress" max="1" value="0"></progress>

@@ -11,7 +11,7 @@
     <title>{{ config('app.name', 'Laravel') }}</title>
 
    <!-- Styles -->
-    <link href="/bakalauras/public/{{ mix('css/app.css') }}" rel="stylesheet">
+    <link href="{{ asset('')}}{{ mix('css/app.css') }}" rel="stylesheet">
 
     <!-- Custom Fonts -->
     <link href="{{ asset('vendor/font-awesome/css/font-awesome.min.css') }}" rel="stylesheet">
@@ -86,7 +86,7 @@
             </div>
         </nav>
 
-        <script src="/bakalauras/public/{{ mix('js/app.js') }}"></script>
+        <script src="{{ asset('')}}{{ mix('js/app.js') }}"></script>
 
         @yield('content')
 
