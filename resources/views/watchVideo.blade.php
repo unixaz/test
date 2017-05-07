@@ -108,7 +108,7 @@
 
                                     {!! Form::open(['url' => '/deleteComment/' . $comment->id, 'class' => 'form-horizontal']) !!}
                                     <label class="radio-inline">
-                                        <input type="radio" name="optionsRadios" value="delete"> Trinti
+                                        <input type="radio" name="optionsRadios" value="delete"> Šalinti
                                     </label>
                                     <button type="submit" class="btn btn-link btn-xs">Atlikti veiksmą</button>
                                     {!! Form::close()  !!}

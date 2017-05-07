@@ -35,7 +35,7 @@
                                 @if (Auth::user()->isAdmin())
                                 {!! Form::open(['url' => '/newsAction/' . $infos->id, 'class' => 'form-horizontal']) !!}
                                     <label class="radio-inline">
-                                        <input type="radio" name="optionsRadios" value="delete"> Trinti
+                                        <input type="radio" name="optionsRadios" value="delete"> Šalinti
                                     </label>
                                     <label class="radio-inline">
                                         <input type="radio" name="optionsRadios" value="update"> Redaguoti
