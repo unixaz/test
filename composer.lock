@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "ca9d938355ba67c7cf7815a6e4add2c5",
+    "content-hash": "63c7667ed23380b25072222ae84f3d70",
     "packages": [
         {
             "name": "dnoegel/php-xdg-base-dir",
@@ -234,6 +234,93 @@
                 }
             ],
             "time": "2015-04-20T18:58:01+00:00"
+        },
+        {
+            "name": "jenky/laravel-plupload",
+            "version": "1.2.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/jenky/laravel-plupload.git",
+                "reference": "902272456b8b72b687d2bf4c613a5035d2d009d1"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/jenky/laravel-plupload/zipball/902272456b8b72b687d2bf4c613a5035d2d009d1",
+                "reference": "902272456b8b72b687d2bf4c613a5035d2d009d1",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/support": "~5.0",
+                "php": ">=5.5.9"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Jenky\\LaravelPlupload\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Linh Tran",
+                    "email": "jenky.w0w@gmail.com"
+                }
+            ],
+            "description": "Plupload package for Laravel 5.0",
+            "keywords": [
+                "laravel",
+                "plupload"
+            ],
+            "time": "2017-02-07T02:10:07+00:00"
+        },
+        {
+            "name": "jildertmiedema/laravel-plupload",
+            "version": "v0.4.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/jildertmiedema/laravel-plupload.git",
+                "reference": "458a729c7d861c713600295c3de33545c65fd594"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/jildertmiedema/laravel-plupload/zipball/458a729c7d861c713600295c3de33545c65fd594",
+                "reference": "458a729c7d861c713600295c3de33545c65fd594",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/support": "^5.1",
+                "php": ">=5.5.0"
+            },
+            "require-dev": {
+                "mockery/mockery": "^0.9.4",
+                "phpunit/phpunit": "^4.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "JildertMiedema\\LaravelPlupload": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Jildert Miedema",
+                    "email": "jildertmiedema@gmail.com"
+                }
+            ],
+            "description": "Laravel 5/Plupload - Handle large file uploads",
+            "keywords": [
+                "laravel",
+                "large files",
+                "pluload"
+            ],
+            "time": "2016-12-07T08:28:34+00:00"
         },
         {
             "name": "laracasts/flash",

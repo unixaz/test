@@ -17,6 +17,7 @@ class CreateSettingsTable extends Migration
         Schema::create('settings', function (Blueprint $table) {
             $table->increments('id');
             $table->boolean('streaming');
+            $table->string('last_private_vid');
             $table->timestamps();
         });
 

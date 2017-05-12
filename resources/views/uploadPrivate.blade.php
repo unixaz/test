@@ -20,7 +20,7 @@
 
                         <div class="form-group">
                             <label for="role">Dėstytojas:</label>
-                            <select name="role" class="form-control">
+                            <select name="role"id="role" class="form-control">
                                 @foreach($users as $user)
                                     <option value="{{ $user->id }}">{{ $user->name }}</option>
                                 @endforeach
@@ -28,7 +28,7 @@
                         </div>
                         <div class="form-group">
                             <label for="difficulty">Sudėtingumas:</label>
-                            <select name="difficulty" class="form-control">
+                            <select name="difficulty" id="difficulty" class="form-control">
                                 <option value="1">Labai lengvas</option>
                                 <option value="2">Lengvas</option>
                                 <option value="3">Vidutinis</option>
@@ -38,21 +38,63 @@
                         </div>
                         <div class="form-group">
                             <label for="title">Pavadinimas:</label>
-                            <input type="text" class="form-control" name="title">
+                            <input type="text" id="title" class="form-control" name="title" required>
                         </div>
                         <div class="form-group">
                             <label for="tags">Raktažodžiai:</label>
-                            <input type="text" class="form-control" name="tags">
+                            <input type="text" id="tags" class="form-control" name="tags" required>
                         </div>
                         <div class="form-group">
                             <label for="description">Aprašymas:</label>
-                            <textarea class="form-control" name="description" rows="3"></textarea>
+                            <textarea class="form-control" name="description" id="description" rows="3" required></textarea>
                         </div>
 
-                            <label class="btn btn-default btn-file">
-                                <input type="file" name="file" accept="video/*" hidden>
-                            </label>
-                        <button type="submit" class="btn btn-primary">Įkelti vaizdo įrašą</button>
+                        <script src="{{ asset('js/plupload.full.min.js') }}"></script>
+                        <script src="{{ asset('js/jquery.plupload.queue.js') }}"></script>
+
+                        <script>
+                            $(function() {
+                                $("#uploader").pluploadQueue({
+                                    runtimes : 'html5',
+                                    max_file_size : '100mb',
+                                    url : '../uploadPrivate2',
+                                    chunk_size: '1mb',
+                                    multi_selection: false,
+                                    dragdrop: false,
+                                    filters : [
+                                        {title : "mp4 files", extensions : "mp4"}
+                                    ]
+                                });
+
+                                var uploader = $('#uploader').pluploadQueue();
+
+                                uploader.bind('FilesAdded', function(up, files) {
+                                    while (up.files.length > 1) {
+                                        up.removeFile(up.files[0]);
+                                    }
+                                });
+
+                                uploader.bind('FileUploaded', function() {
+                                    if (uploader.files.length == (uploader.total.uploaded + uploader.total.failed)) {
+                                        $.ajax({
+                                            headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                                            url: '/bakalauras/public/uploadPrivate3',
+                                            type: 'POST',
+                                            data: {
+                                                role: document.getElementById("role").value,
+                                                difficulty: document.getElementById("difficulty").value,
+                                                title: document.getElementById("title").value,
+                                                tags: document.getElementById("tags").value,
+                                                description: document.getElementById("description").value
+                                            },
+                                            datatype: 'json'
+                                        });
+                                    }
+                                });
+                            });
+                        </script>
+
+                        <div id="uploader">You browser doesn't have HTML 4 support.</div>
 
                         {!! Form::close()  !!}
 
@@ -61,6 +103,8 @@
             </div>
         </div>
     </div>
+
+
 
 
 @endsection

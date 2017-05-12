@@ -58,7 +58,7 @@
             var data=list;
             $.ajax({
                 headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-                url: '/bakalauras/public/changeVideoOrder3',
+                url: '../changeVideoOrder3',
                 type: 'POST',
                 data: {
                     playlist_id:'<?php echo $id; ?>',

@@ -15,8 +15,11 @@ use App\Playlist;
 use App\VideosInPlaylist;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Storage;
+use JildertMiedema\LaravelPlupload\Facades\Plupload;
 
 
 class ActionsController extends Controller
@@ -1005,9 +1008,24 @@ foreach ($request['ch'] as $selectedVideo) {
         return view('uploadPrivate', compact('users'));
     }
 
-    public function uploadPrivate2(Request $request)
+    public function uploadPrivate2()
     {
-        $this->validate(
+        Plupload::receive('file', function ($file)
+        {
+            $last_private_vid = time().'.mp4';
+            Setting::first()->update(['last_private_vid' => $last_private_vid]);
+
+            $file->move(storage_path() . '/app/uploads/', $last_private_vid);
+
+        });
+
+
+    }
+
+    public function uploadPrivate3(Request $request)
+    {
+
+        /*$this->validate(
             $request,
             ['title' => 'required'],
             ['title.required' => 'Nenurodytas pavadinimas']
@@ -1030,14 +1048,16 @@ foreach ($request['ch'] as $selectedVideo) {
             ['file.required' => 'Nepasirinktas failas']
         );
 
-        $request->file('file')->store('uploads');
+        */
+
+        $settings = Setting::first();
 
         $video = Video::create([
             'title' => $request->get('title'),
             'description'  => $request->get('description'),
             'difficulty'  => $request->get('difficulty'),
-            'video_id'  => $request->file->hashName(),
-            'user_id'  => Auth::id(),
+            'video_id'  => $settings->last_private_vid,
+            'user_id'  => $request->get('role'),
             'privacy'  => 'unlisted'
         ]);
 
@@ -1061,6 +1081,7 @@ foreach ($request['ch'] as $selectedVideo) {
         }
 
         return back();
+
     }
 
     public function watchPrivate($filename)

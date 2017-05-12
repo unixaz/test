@@ -49,6 +49,7 @@ Route::group(['middleware' => ['admin']], function () {
 
     Route::get('/uploadPrivate', 'ActionsController@uploadPrivate');
     Route::post('/uploadPrivate2', 'ActionsController@uploadPrivate2');
+    Route::post('/uploadPrivate3', 'ActionsController@uploadPrivate3');
 });
 
 Route::group(['middleware' => ['admin_professor']], function () {

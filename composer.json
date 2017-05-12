@@ -6,6 +6,8 @@
     "type": "project",
     "require": {
         "php": ">=5.6.4",
+        "jenky/laravel-plupload": "^1.2",
+        "jildertmiedema/laravel-plupload": "^0.4.1",
         "laracasts/flash": "^2.0",
         "laravel/framework": "5.4.*",
         "laravel/tinker": "~1.0",
