@@ -16,6 +16,13 @@
     <!-- Custom Fonts -->
     <link href="{{ asset('vendor/font-awesome/css/font-awesome.min.css') }}" rel="stylesheet">
 
+   {{-- <style>
+        #footer {
+            box-shadow: 0px 500px 0px 500px #f5f5f5;
+            background-color: #f5f5f5;
+        }
+        </style>--}}
+
     <!-- Scripts -->
     <script>
         window.Laravel = {!! json_encode([

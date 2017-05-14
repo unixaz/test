@@ -136,7 +136,7 @@
 
                 $.ajax({
                     headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-                    url: '/bakalauras/public/starVideo',
+                    url: '../starVideo',
                     type: 'POST',
                     data: {
                         video_id:'<?php echo $videos['id']; ?>',

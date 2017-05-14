@@ -46,7 +46,7 @@
 
                             <div class="form-group">
                                 <div class="col-lg-10 col-lg-offset-2">
-                                    <button type="submit" class="btn btn-primary">Trinti video</button>
+                                    <button type="submit" class="btn btn-primary">Šalinti vaizdo įrašus</button>
                                 </div>
                             </div>
 

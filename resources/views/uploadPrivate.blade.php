@@ -78,7 +78,7 @@
                                     if (uploader.files.length == (uploader.total.uploaded + uploader.total.failed)) {
                                         $.ajax({
                                             headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-                                            url: '/bakalauras/public/uploadPrivate3',
+                                            url: 'uploadPrivate3',
                                             type: 'POST',
                                             data: {
                                                 role: document.getElementById("role").value,

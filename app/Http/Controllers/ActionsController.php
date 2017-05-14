@@ -22,6 +22,7 @@ use Illuminate\Support\Facades\Storage;
 use JildertMiedema\LaravelPlupload\Facades\Plupload;
 
 
+
 class ActionsController extends Controller
 {
 
@@ -1016,6 +1017,22 @@ foreach ($request['ch'] as $selectedVideo) {
             Setting::first()->update(['last_private_vid' => $last_private_vid]);
 
             $file->move(storage_path() . '/app/uploads/', $last_private_vid);
+
+
+            $ffmpeg = \FFMpeg\FFMpeg::create();
+            $video = $ffmpeg->open(storage_path() . '/app/uploads/', $last_private_vid);
+            $video
+                ->save(new \FFMpeg\Format\Video\WebM(), 'export-webm.webm');
+
+       // use Pbmedia\LaravelFFMpeg\FFMpeg;
+        //use FFMpeg\FFMpeg;
+/*
+            $ffmpeg = \FFMpeg\FFMpeg::create();
+            $ffmpeg->open(storage_path() . '/app/uploads/', $last_private_vid)
+                ->export()
+                ->toDisk('converted_songs')
+                ->inFormat(new \FFMpeg\Format\Audio\Aac)
+                ->save('yesterday.aac');*/
 
         });
 

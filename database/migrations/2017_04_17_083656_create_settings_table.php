@@ -23,7 +23,8 @@ class CreateSettingsTable extends Migration
 
         DB::table('settings')->insert(
             array(
-                'streaming' => false
+                'streaming' => false,
+                'last_private_vid' => 0
             )
         );
     }
