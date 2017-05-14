@@ -1013,26 +1013,29 @@ foreach ($request['ch'] as $selectedVideo) {
     {
         Plupload::receive('file', function ($file)
         {
-            $last_private_vid = time().'.mp4';
-            Setting::first()->update(['last_private_vid' => $last_private_vid]);
+            $current_time = time();
+            $last_private_vid = $current_time . '.' . $file->getClientOriginalExtension();
+            Setting::first()->update(['last_private_vid' => $current_time . '.webm']);
 
             $file->move(storage_path() . '/app/uploads/', $last_private_vid);
 
 
-            $ffmpeg = \FFMpeg\FFMpeg::create();
-            $video = $ffmpeg->open(storage_path() . '/app/uploads/', $last_private_vid);
-            $video
-                ->save(new \FFMpeg\Format\Video\WebM(), 'export-webm.webm');
+            $ffmpeg = \FFMpeg\FFMpeg::create([
+                'default_disk' => 'local',
 
-       // use Pbmedia\LaravelFFMpeg\FFMpeg;
-        //use FFMpeg\FFMpeg;
-/*
-            $ffmpeg = \FFMpeg\FFMpeg::create();
-            $ffmpeg->open(storage_path() . '/app/uploads/', $last_private_vid)
-                ->export()
-                ->toDisk('converted_songs')
-                ->inFormat(new \FFMpeg\Format\Audio\Aac)
-                ->save('yesterday.aac');*/
+                'ffmpeg.binaries' => 'C:/ffmpeg/bin/ffmpeg.exe', //'/usr/bin/ffmpeg',
+                'ffmpeg.threads'  => 1,
+
+                'ffprobe.binaries' => 'C:/ffmpeg/bin/ffprobe.exe',//'/usr/bin/ffprobe',
+
+                'timeout' => 300, //3600
+            ]);
+
+            $video = $ffmpeg->open(storage_path() . '/app/uploads/' . $last_private_vid);
+            $video->save(new \FFMpeg\Format\Video\WebM(), storage_path() . '/app/uploads/' . $current_time . '.webm');
+
+            Storage::delete('/uploads/' . $last_private_vid);
+
 
         });
 

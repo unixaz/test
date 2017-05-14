@@ -62,7 +62,7 @@
                                     multi_selection: false,
                                     dragdrop: false,
                                     filters : [
-                                        {title : "mp4 files", extensions : "mp4"}
+                                        {title : "mp4 files", extensions : "mp4,avi,flv,3gp,wmv.mov"}
                                     ]
                                 });
 
