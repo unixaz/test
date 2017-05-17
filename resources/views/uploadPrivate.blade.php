@@ -2,6 +2,9 @@
 
 @section('content')
 
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js"></script>
+
     <div class="container-fluid">
         <div class="row row-offcanvas row-offcanvas-left">
 
@@ -19,13 +22,10 @@
                         {!! Form::open(['url' => '/uploadPrivate2', 'class' => 'form-horizontal', 'enctype' => "multipart/form-data"]) !!}
 
                         <div class="form-group">
-                            <label for="role">Dėstytojas:</label>
-                            <select name="role"id="role" class="form-control">
-                                @foreach($users as $user)
-                                    <option value="{{ $user->id }}">{{ $user->name }}</option>
-                                @endforeach
-                            </select>
+                            <label for="productName">Dėstytojas:</label>
+                                <select class="productName form-control" name="productName" id="productName" multiple="multiple"></select>
                         </div>
+
                         <div class="form-group">
                             <label for="difficulty">Sudėtingumas:</label>
                             <select name="difficulty" id="difficulty" class="form-control">
@@ -81,7 +81,7 @@
                                             url: 'uploadPrivate3',
                                             type: 'POST',
                                             data: {
-                                                role: document.getElementById("role").value,
+                                                role: $('#productName').val(),
                                                 difficulty: document.getElementById("difficulty").value,
                                                 title: document.getElementById("title").value,
                                                 tags: document.getElementById("tags").value,
@@ -91,6 +91,29 @@
                                         });
                                     }
                                 });
+                            });
+
+                            $( ".productName" ).select2({
+                                ajax: {
+                                    url: "ajax/professorsList",
+                                    dataType: 'json',
+                                    delay: 250,
+                                    data: function (params) {
+                                        return {
+                                            q: params.term // search term
+                                        };
+                                    },
+                                    processResults: function (data) {
+                                        // parse the results into the format expected by Select2.
+                                        // since we are using custom formatting functions we do not need to
+                                        // alter the remote JSON data
+                                        return {
+                                            results: data
+                                        };
+                                    },
+                                    cache: true
+                                },
+                                minimumInputLength: 2
                             });
                         </script>
 

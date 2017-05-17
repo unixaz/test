@@ -2,6 +2,9 @@
 
 @section('content')
 
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js"></script>
+
     <div class="container-fluid">
         <div class="row row-offcanvas row-offcanvas-left">
 
@@ -19,13 +22,9 @@
                     {!! Form::open(['url' => '/addVideo', 'class' => 'form-horizontal']) !!}
 
                         <div class="form-group">
-                            <label for="professor" class="col-lg-2 control-label">Savininkas</label>
+                            <label for="difficulty" class="col-lg-2 control-label">Dėstytojai:</label>
                             <div class="col-lg-10">
-                                <select name="professor" class="form-control">
-                                    @foreach ($users as $user)
-                                        <option value="{{ $user->id }}">{{ $user->name }}</option>
-                                    @endforeach
-                                </select>
+                            <select class="productName form-control" name="productName[]" id="productName" multiple="multiple"></select>
                             </div>
                         </div>
 
@@ -80,6 +79,31 @@
                                 <button type="submit" class="btn btn-primary">Pridėti vaizdo įrašą</button>
                             </div>
                         </div>
+
+                        <script>
+                            $( ".productName" ).select2({
+                                ajax: {
+                                    url: "ajax/professorsList",
+                                    dataType: 'json',
+                                    delay: 250,
+                                    data: function (params) {
+                                        return {
+                                            q: params.term // search term
+                                        };
+                                    },
+                                    processResults: function (data) {
+                                        // parse the results into the format expected by Select2.
+                                        // since we are using custom formatting functions we do not need to
+                                        // alter the remote JSON data
+                                        return {
+                                            results: data
+                                        };
+                                    },
+                                    cache: true
+                                },
+                                minimumInputLength: 2
+                            });
+                            </script>
 
                     {!! Form::close()  !!}
 

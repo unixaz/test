@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Comment;
 use App\Http\VideoStream;
 use App\Info;
+use App\Owner;
 use App\Permission;
 use App\Setting;
 use App\StarVideo;
@@ -17,6 +18,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Input;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Storage;
 use JildertMiedema\LaravelPlupload\Facades\Plupload;
@@ -88,11 +90,7 @@ class ActionsController extends Controller
 
     public function addVideo()
     {
-        $users = User::where('confirmed', true)
-            ->whereIn('role', [1,2])
-            ->get();
-
-        return view('addVideo',compact('users'));
+        return view('addVideo');
     }
 
 
@@ -137,7 +135,6 @@ class ActionsController extends Controller
             'title' => $request->get('title'),
             'description'  => $request->get('description'),
             'video_id'  => $values,
-            'user_id'  => $request->get('professor'),
             'privacy' => 'public',
             'difficulty' => $request->get('difficulty')
         ]);
@@ -156,6 +153,21 @@ class ActionsController extends Controller
 
             }
             $video->tags()->sync($tagIds);
+
+            $ownerIds = [];
+            foreach($request->productName as $owner_id)
+            {
+                //$post->tags()->create(['name'=>$tagName]);
+                //Or to take care of avoiding duplication of Tag
+                //you could substitute the above line as
+                $owner = Owner::firstOrCreate(['name'=>$owner_id]);
+                if($owner)
+                {
+                    $ownerIds[] = $owner->id;
+                }
+
+            }
+            $video->owners()->sync($ownerIds);
         }
         flash('Sėkmingai įvykdyta', 'success');
         return redirect('/addVideo');
@@ -164,20 +176,19 @@ class ActionsController extends Controller
 
     public function myVideos()
     {
-        $videos = Video::where('user_id',Auth::id())
-            ->get();
-
+        $user_videos = Owner::with('videos')->where('name', Auth::id())->first();
+        $videos = [];
+        foreach($user_videos->videos as $video)
+        {
+            $videos[] = $video;
+        }
         $useFilter = true;
         return view('videoList', compact('videos', 'useFilter'));
     }
 
     public function upload()
     {
-        $users = User::where('confirmed', true)
-            ->whereIn('role', [1,2])
-            ->get();
-
-        return view('upload', compact('users'));
+        return view('upload');
     }
 
     public function upload_data(Request $request)
@@ -188,7 +199,6 @@ class ActionsController extends Controller
             'description'  => $request->get('description'),
             'difficulty'  => $request->get('difficulty'),
             'video_id'  => $request->get('video_id'),
-            'user_id'  => $request->get('user_id'),
             'privacy'  => 'public'
         ]);
 
@@ -209,6 +219,21 @@ class ActionsController extends Controller
 
             }
             $video->tags()->sync($tagIds);
+
+            $ownerIds = [];
+            foreach($request->productName as $owner_id)
+            {
+                //$post->tags()->create(['name'=>$tagName]);
+                //Or to take care of avoiding duplication of Tag
+                //you could substitute the above line as
+                $owner = Owner::firstOrCreate(['name'=>$owner_id]);
+                if($owner)
+                {
+                    $ownerIds[] = $owner->id;
+                }
+
+            }
+            $video->owners()->sync($ownerIds);
         }
     }
 
@@ -464,13 +489,11 @@ foreach ($request['ch'] as $selectedVideo) {
     public function changeOwner()
     {
         $videos = Video::with('users')->get();
-
         $professors = User::where('confirmed', true)
             ->whereIn('role', [1,2])
             ->get();
         return view('changeOwner', compact('videos', 'professors'));
     }
-
     public function changeOwner2(Request $request)
     {
         $this->validate(
@@ -478,15 +501,12 @@ foreach ($request['ch'] as $selectedVideo) {
             ['ch' => 'required'],
             ['ch.required' => 'Nepasirinkti video']
         );
-
         foreach ($request['ch'] as $selectedVideo) {
             Video::where('id', $selectedVideo)
                 ->update(['user_id' => $request->professor]);
         }
-
         flash('Sėkmingai įvykdyta', 'success');
         return redirect('/changeOwner');
-
     }
 
     public function deleteVideo()
@@ -685,7 +705,14 @@ foreach ($request['ch'] as $selectedVideo) {
     {
         $professor = User::findOrFail($id);
         $playlists = Playlist::where('user_id', $id)->get();
-        $allVideos = Video::where('user_id', $id)->get();
+        ////
+        $user_videos = Owner::with('videos')->where('name', Auth::id())->first();
+        $allVideos = [];
+        foreach($user_videos->videos as $video)
+        {
+            $allVideos[] = $video;
+        }
+        ///
         $videosCount = array();
         foreach ($playlists as $playlist) {
             $videosCount[] = VideosInPlaylist::where('playlist_id', $playlist->id)
@@ -837,7 +864,16 @@ foreach ($request['ch'] as $selectedVideo) {
         }
         $tags_string = substr($tags_string, 0, -1);
 
-        return view('updateVideoInfo', compact('video','tags_string'));
+        ////
+        $user_videos = Video::with('owners')->where('id', $id)->first();
+        $owners = [];
+        foreach($user_videos->owners as $videos)
+        {
+            $owners[] = User::findOrFail($videos->name);
+        }
+        ///
+
+        return view('updateVideoInfo', compact('video','tags_string', 'owners'));
     }
 
     public function updateVideoInfo2(Request $request, $id)
@@ -874,6 +910,23 @@ foreach ($request['ch'] as $selectedVideo) {
 
         }
         $video->tags()->sync($tagIds);
+
+        if (!empty($request->productName)) {
+            $ownerIds = [];
+           foreach($request->productName as $owner_id)
+           {
+               //$post->tags()->create(['name'=>$tagName]);
+               //Or to take care of avoiding duplication of Tag
+               //you could substitute the above line as
+               $owner = Owner::firstOrCreate(['name'=>$owner_id]);
+               if($owner)
+               {
+                   $ownerIds[] = $owner->id;
+               }
+
+           }
+           $video->owners()->sync($ownerIds);
+        }
 
         $video->difficulty = $request->difficulty;
         $video->title = $request->title;
@@ -1001,12 +1054,7 @@ foreach ($request['ch'] as $selectedVideo) {
 
     public function uploadPrivate()
     {
-
-        $users = User::where('confirmed', true)
-            ->whereIn('role', [1,2])
-            ->get();
-
-        return view('uploadPrivate', compact('users'));
+        return view('uploadPrivate');
     }
 
     public function uploadPrivate2()
@@ -1020,7 +1068,7 @@ foreach ($request['ch'] as $selectedVideo) {
             $file->move(storage_path() . '/app/uploads/', $last_private_vid);
 
 
-            $ffmpeg = \FFMpeg\FFMpeg::create([
+            /*$ffmpeg = \FFMpeg\FFMpeg::create([
                 'default_disk' => 'local',
 
                 'ffmpeg.binaries' => 'C:/ffmpeg/bin/ffmpeg.exe', //'/usr/bin/ffmpeg',
@@ -1034,7 +1082,7 @@ foreach ($request['ch'] as $selectedVideo) {
             $video = $ffmpeg->open(storage_path() . '/app/uploads/' . $last_private_vid);
             $video->save(new \FFMpeg\Format\Video\WebM(), storage_path() . '/app/uploads/' . $current_time . '.webm');
 
-            Storage::delete('/uploads/' . $last_private_vid);
+            Storage::delete('/uploads/' . $last_private_vid);*/
 
 
         });
@@ -1070,6 +1118,8 @@ foreach ($request['ch'] as $selectedVideo) {
 
         */
 
+       // Log::info('Pasirinkti destytpojai: ' .print_r($request->get('role')));
+
         $settings = Setting::first();
 
         $video = Video::create([
@@ -1077,7 +1127,6 @@ foreach ($request['ch'] as $selectedVideo) {
             'description'  => $request->get('description'),
             'difficulty'  => $request->get('difficulty'),
             'video_id'  => $settings->last_private_vid,
-            'user_id'  => $request->get('role'),
             'privacy'  => 'unlisted'
         ]);
 
@@ -1098,7 +1147,24 @@ foreach ($request['ch'] as $selectedVideo) {
 
             }
             $video->tags()->sync($tagIds);
+
+            $ownerIds = [];
+            foreach($request->role as $owner_id)
+            {
+                //$post->tags()->create(['name'=>$tagName]);
+                //Or to take care of avoiding duplication of Tag
+                //you could substitute the above line as
+                $owner = Owner::firstOrCreate(['name'=>$owner_id]);
+                if($owner)
+                {
+                    $ownerIds[] = $owner->id;
+                }
+
+            }
+            $video->owners()->sync($ownerIds);
+
         }
+
 
         return back();
 
@@ -1165,8 +1231,34 @@ foreach ($request['ch'] as $selectedVideo) {
     }
 
 
+    public function getProfessorsList(Request $request)
+    {
+        $list = User::where('confirmed', true)
+            ->whereIn('role', [1,2])
+            ->where('name', 'LIKE', "%$request->q%")->get();
 
+        $data = [];
+        if(count($list) > 0){
+            foreach ($list as $key => $value) {
+                $data[] = array('id' => $value['id'], 'text' => $value['name']);
+            }
+        }
 
+        return response()->json($data);
+    }
+    public function getVideosList(Request $request)
+    {
+        $list = Video::where('title', 'LIKE', "%$request->q%")->get();
+
+        $data = [];
+        if(count($list) > 0){
+            foreach ($list as $key => $value) {
+                $data[] = array('id' => $value['id'], 'text' => $value['title']);
+            }
+        }
+
+        return response()->json($data);
+    }
 
 
 }

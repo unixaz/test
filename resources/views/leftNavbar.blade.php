@@ -24,7 +24,7 @@
                         <li><a href="{{ url('upload') }}"> Įkelti viešą vaizdo įrašą</a></li>
                         <li><a href="{{ url('uploadPrivate') }}"> Įkelti privatų vaizdo įrašą</a></li>
                         <li><a href="{{ url('addVideo') }}"> Pridėti viešą vaizdo įrašą</a></li>
-                        <li><a href="{{ url('changeOwner') }}"> Keisti vaizdo įrašo savininką</a></li>
+                        {{--<li><a href="{{ url('changeOwner') }}"> Keisti vaizdo įrašo savininką</a></li>--}}
                         <li class="divider"></li>
                         <li><a href="{{ url('deleteVideo') }}"> Šalinti viešą vaizdo įrašą</a></li>
                         <li><a href="{{ url('deletePrivateVideo') }}"> Šalinti privatų vaizdo įrašą</a></li>

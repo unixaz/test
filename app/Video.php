@@ -32,4 +32,9 @@ class Video extends Model
         return $this->hasMany('App\User', 'id', 'user_id');
     }
 
+    public function owners()
+    {
+        return $this->belongsToMany('App\Owner');
+    }
+
 }

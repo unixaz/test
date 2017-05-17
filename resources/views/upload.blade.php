@@ -18,11 +18,6 @@
         max-width: 350px;
     }
 
-    body {
-        font-family: "Open Sans", sans-serif;
-        font-size: 1.5em;
-    }
-
     .post-sign-in {
         display: none;
     }
@@ -35,24 +30,13 @@
         display: none;
     }
 
-    label {
-        display: block;
-    }
-
-    input[type="text"], textarea, progress {
-        font-size: 0.75em;
-        width: 15em;
-        margin-bottom: 1em;
-        padding: 0.5em;
-        font-family: "Open Sans", sans-serif;
-    }
-
-    textarea {
-        height: 7em;
-    }
 </style>
 
+
 @section('content')
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js"></script>
 
     <div class="container-fluid">
         <div class="row row-offcanvas row-offcanvas-left">
@@ -84,14 +68,14 @@
                                 <span id="channel-name"></span>
                             </div>
                             <hr>
+
                             <div class="form-group">
-                                <label for="role">Dėstytojas:</label>
-                                <select id="role" class="form-control">
-                                    @foreach($users as $user)
-                                        <option value="{{ $user->id }}">{{ $user->name }}</option>
-                                    @endforeach
-                                </select>
+                                <label for="productName">Dėstytojai:</label>
+
+                                    <select class="productName form-control" name="productName[]" id="productName" multiple="multiple" style="width: 100%"></select>
+
                             </div>
+
                             <div class="form-group">
                                 <label for="difficulty">Sudėtingumas:</label>
                                 <select id="difficulty" class="form-control">
@@ -139,6 +123,31 @@
             </div>
         </div>
     </div>
+
+    <script>
+        $( ".productName" ).select2({
+            ajax: {
+                url: "ajax/professorsList",
+                dataType: 'json',
+                delay: 250,
+                data: function (params) {
+                    return {
+                        q: params.term // search term
+                    };
+                },
+                processResults: function (data) {
+                    // parse the results into the format expected by Select2.
+                    // since we are using custom formatting functions we do not need to
+                    // alter the remote JSON data
+                    return {
+                        results: data
+                    };
+                },
+                cache: true
+            },
+            minimumInputLength: 2
+        });
+    </script>
 @endsection
 
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
@@ -309,7 +318,7 @@
                         title: document.getElementById("title").value,
                         description: document.getElementById("description").value,
                         video_id: this.videoId,
-                        user_id: document.getElementById("role").value,
+                        productName: $('#productName').val(),
                         difficulty: document.getElementById("difficulty").value
                     },
                     dataType: 'JSON',

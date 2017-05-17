@@ -2,6 +2,10 @@
 
 @section('content')
 
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js"></script>
+
+
     <div class="container-fluid">
         <div class="row row-offcanvas row-offcanvas-left">
 
@@ -17,6 +21,21 @@
                         @include('errors')
 
                     {!! Form::open(['url' => '/updateVideoInfo2/' . $video['id'], 'class' => 'form-horizontal']) !!}
+
+                        Savininkai:
+                        @foreach($owners as $owner)
+                            {{ $owner->name }}
+                            @if (!$loop->last)
+                                ,
+                            @endif
+                        @endforeach
+
+                        <div class="form-group">
+                            <label for="difficulty" class="col-lg-2 control-label">Dėstytojai:</label>
+                            <div class="col-lg-10">
+                                <select class="productName form-control" name="productName[]" id="productName" multiple="multiple"></select>
+                            </div>
+                        </div>
 
                         <div class="form-group">
                             <label for="difficulty" class="col-lg-2 control-label">Sudėtingumas</label>
@@ -53,7 +72,6 @@
                             <label for="textArea" class="col-lg-2 control-label">Aprašymas</label>
                             <div class="col-lg-10">
                                 <textarea class="form-control" rows="3" name="description" required>{{ $video['description'] }}</textarea>
-                                <span class="help-block">A longer block of help text that breaks onto a new line and may extend beyond one line.</span>
                             </div>
                         </div>
 
@@ -72,5 +90,29 @@
         </div>
     </div>
 
+    <script>
+        $( ".productName" ).select2({
+            ajax: {
+                url: "../ajax/professorsList",
+                dataType: 'json',
+                delay: 250,
+                data: function (params) {
+                    return {
+                        q: params.term // search term
+                    };
+                },
+                processResults: function (data) {
+                    // parse the results into the format expected by Select2.
+                    // since we are using custom formatting functions we do not need to
+                    // alter the remote JSON data
+                    return {
+                        results: data
+                    };
+                },
+                cache: true
+            },
+            minimumInputLength: 2
+        });
+    </script>
 @endsection
 
