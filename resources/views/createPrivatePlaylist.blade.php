@@ -10,13 +10,13 @@
             <div class="col-xs-12 col-sm-9">
 
                 <div class="panel panel-default">
-                    <div class="panel-heading"><b>Kurti viešą grojaraštį</b></div>
+                    <div class="panel-heading"><b>Kurti privatų grojaraštį</b></div>
                     <div class="panel-body">
 
                         @include('flash::message')
                         @include('errors')
 
-                    {!! Form::open(['url' => '/createPlaylist', 'class' => 'form-horizontal']) !!}
+                    {!! Form::open(['url' => '/createPrivatePlaylist', 'class' => 'form-horizontal']) !!}
 
                         <fieldset>
 
@@ -35,12 +35,20 @@
                                         <thead>
                                         <tr>
                                             <th>Pavadinimas</th>
+                                            <th>Privatumas</th>
                                         </tr>
                                         </thead>
                                         <tbody>
                                             @foreach ($videos as $video)
                                                 <tr>
                                                     <td> {!! Form::checkbox('ch[]', $video['id'], false) !!} {!! Form::label($video['title']) !!}</td>
+                                                    <td>
+                                                        @if ($video['privacy'] == 'public')
+                                                            Viešas
+                                                        @elseif ($video['privacy'] == 'unlisted')
+                                                            Privatus
+                                                        @endif
+                                                    </td>
                                                 </tr>
                                             @endforeach
                                         </tbody>

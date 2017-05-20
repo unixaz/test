@@ -11,7 +11,7 @@
                     <a href="{{ url('writeNews') }}"><i class="fa fa-newspaper-o fa-fw"></i> Skelbti naujieną</a>
                 </li>
                 <li>
-                    <a href="{{ url('confirmUser') }}"><i class="fa fa-users fa-fw"></i> Patvirtinti vartotojus</a>
+                    <a href="{{ url('groups') }}"><i class="fa fa-users fa-fw"></i> Grupių nustatymai</a>
                 </li>
 
                 <li class="dropdown">
@@ -26,8 +26,8 @@
                         <li><a href="{{ url('addVideo') }}"> Pridėti viešą vaizdo įrašą</a></li>
                         {{--<li><a href="{{ url('changeOwner') }}"> Keisti vaizdo įrašo savininką</a></li>--}}
                         <li class="divider"></li>
-                        <li><a href="{{ url('deleteVideo') }}"> Šalinti viešą vaizdo įrašą</a></li>
-                        <li><a href="{{ url('deletePrivateVideo') }}"> Šalinti privatų vaizdo įrašą</a></li>
+                        <li><a href="{{ url('deleteVideo') }}"> Šalinti vaizdo įrašus</a></li>
+                        {{--<li><a href="{{ url('deletePrivateVideo') }}"> Šalinti privatų vaizdo įrašą</a></li>--}}
                     </ul>
                 </li>
                 <li>
@@ -41,10 +41,10 @@
             @if (Auth::user()->isAdminOrProfessor())
 
                 <li>
-                    <a href="{{ url('myVideos') }}"><i class="fa fa-youtube-play fa-fw"></i> Mano vaizdo įrašai</a>
+                    <a href="{{ url('generateKey') }}"><i class="fa fa-key fa-fw"></i> Generuoti raktą</a>
                 </li>
                 <li>
-                    <a href="{{ url('videoPermissions') }}"><i class="fa fa-lock fa-fw"></i> Privačių vaizdo įrašų teisės</a>
+                    <a href="{{ url('myVideos') }}"><i class="fa fa-youtube-play fa-fw"></i> Mano vaizdo įrašai</a>
                 </li>
 
                 {{--<li class="dropdown">
@@ -66,8 +66,11 @@
                         <span class="caret"></span>
                     </a>
                     <ul class="dropdown-menu">
-                        <li><a href="{{ url('createPlaylist') }}"> Kurti grojaraštį</a></li>
-                        <li><a href="{{ url('assignToPlaylist') }}"> Priskirti vaizdo įrašą grojaraščiui</a></li>
+                        <li><a href="{{ url('createPlaylist') }}"> Kurti viešą grojaraštį</a></li>
+                        <li><a href="{{ url('createPrivatePlaylist') }}"> Kurti privatų grojaraštį</a></li>
+                        <li><a href="{{ url('privatePlaylistPermissions') }}"> Privačių grojaraščių teisės</a></li>
+                        <li><a href="{{ url('assignToPlaylist') }}"> Pridėti vaizdo įrašą į viešą grojaraštį</a></li>
+                        <li><a href="{{ url('assignToPrivatePlaylist') }}"> Pridėti vaizdo įrašą į privatų grojaraštį</a></li>
                         <li><a href="{{ url('deleteFromPlaylist') }}"> Šalinti vaizdo įrašą iš grojaraščio</a></li>
                         <li><a href="{{ url('changeVideoOrder') }}"> Keisti vaizdo įrašų pozicijas grojaraštyje</a></li>
                         <li class="divider"></li>

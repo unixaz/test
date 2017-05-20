@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Regkey;
 use App\User;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Input;
+use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Database\Eloquent\Model;
@@ -48,12 +51,26 @@ class RegisterController extends Controller
      */
     protected function validator(array $data)
     {
-        return Validator::make($data, [
-            'name' => 'required|max:255',
-            'email' => 'required|email|max:255|unique:users',
-            'password' => 'required|min:6|confirmed',
-            'role' => 'digits_between:0,1',
-        ]);
+        $user = User::first();
+        if (empty($user))
+        {
+            $rules = [
+                'name' => 'required|max:255',
+                'email' => 'required|email|max:255|unique:users',
+                'password' => 'required|min:6|confirmed',
+                'role' => 'digits_between:0,1',
+            ];
+        }else {
+            $rules = [
+                'name' => 'required|max:255',
+                'email' => 'required|email|max:255|unique:users',
+                'password' => 'required|min:6|confirmed',
+               /* 'role' => 'digits_between:0,1',*/
+                'regkey' => 'exists:regkeys,regkey',
+            ];
+        }
+
+        return Validator::make($data, $rules);
     }
 
     /**
@@ -64,22 +81,30 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
-        $role = $data['role'];
-        $confirmed = false;
+ /*       $role = $data['role'];
+        $confirmed = false;*/
 
         $user = User::first();
         if (empty($user))
         {
-            $confirmed = true;
+            //$confirmed = true;
             $role = 2;
         }
+           $regkey = Regkey::where('regkey', $data['regkey'])->first();
+
+if ($regkey->role_id == 0)
+{
+    $group = $data['group'];
+}else{
+    $group = 0;
+}
 
         return User::create([
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => bcrypt($data['password']),
-            'role' => $role,
-            'confirmed' => $confirmed,
+            'role' => $regkey->role_id,
+            'group' => $group,
         ]);
     }
 }

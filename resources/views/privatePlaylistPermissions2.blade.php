@@ -10,13 +10,13 @@
             <div class="col-xs-12 col-sm-9">
 
                 <div class="panel panel-default">
-                    <div class="panel-heading"><b>Privačių video teisės</b></div>
+                    <div class="panel-heading"><b>Privačių grojaraščių teisės</b></div>
                     <div class="panel-body">
 
                         @include('flash::message')
                         @include('errors')
 
-                    {!! Form::open(['url' => '/videoPermissions3/' . $id, 'class' => 'form-horizontal']) !!}
+                    {!! Form::open(['url' => '/privatePlaylistPermissions3/' . $id, 'class' => 'form-horizontal']) !!}
                         <fieldset>
 
                             {{ ($errors->has('privacy')) ? $errors->first('privacy') : '' }}
@@ -33,25 +33,25 @@
                             </div>
 
                             <div class="form-group">
-                                <label for="title" class="col-lg-2 control-label">Vartotojai</label>
+                                <label for="title" class="col-lg-2 control-label">Grupių teisės</label>
                                 <div class="col-lg-10">
                                     <table class="table table-bordered">
                                         <thead>
                                         <tr>
-                                            <th>Vardas Pavardė</th>
+                                            <th>Grupė</th>
                                             <th>Teisės</th>
                                         </tr>
                                         </thead>
                                         <tbody>
-                                        @foreach ($users as $key => $user)
+                                        @foreach ($groups as $key => $group)
                                             <tr>
-                                                <td> {!! Form::checkbox('ch[]', $user['id'], false) !!} {!! Form::label($user['name']) !!}</td>
+                                                <td> {!! Form::checkbox('ch[]', $group['id'], false) !!} {!! Form::label($group['group']) !!}</td>
 
                                                     <td>
-                                                        @foreach ($user->permission as $permission)
-                                                            @if ($permission->video_id == $id)
-
-                                                                Mato video
+                                                        @foreach ($playlists as $playlist)
+                                                            @if ($playlist->group_id == $group['id'])
+                                                                Mato grojaraštį
+                                                                @break
                                                             @endif
                                                         @endforeach
                                                     </td>

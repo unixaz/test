@@ -12,6 +12,6 @@ class Permission extends Model
      * @var array
      */
     protected $fillable = [
-        'user_id', 'video_id',
+        'group_id', 'playlist_id', 'user_id',
     ];
 }

@@ -2,6 +2,9 @@
 
 @section('content')
 
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js"></script>
+
     <div class="container-fluid">
         <div class="row row-offcanvas row-offcanvas-left">
 
@@ -10,7 +13,7 @@
             <div class="col-xs-12 col-sm-9">
 
                 <div class="panel panel-default">
-                    <div class="panel-heading"><b>Šalinti vaizdo įrašą</b></div>
+                    <div class="panel-heading"><b>Šalinti vaizdo įrašus</b></div>
                     <div class="panel-body">
 
                         @include('flash::message')
@@ -24,23 +27,9 @@
                             <div class="form-group">
                                 <label for="title" class="col-lg-2 control-label">Vaizdo įrašai</label>
                                 <div class="col-lg-10">
-                                    <table class="table table-bordered">
-                                        <thead>
-                                        <tr>
-                                            <th>Pavadinimas</th>
-                                            <th>Savininkas</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        @foreach ($videos as $video)
-                                            <tr>
-                                                <td> {!! Form::checkbox('ch[]', $video['id'], false) !!} {!! Form::label($video['title']) !!}</td>
-                                                @foreach ($video->users as $users)
-                                                    <td>{{ $users->name }}</td>
-                                                @endforeach
-                                        @endforeach
-                                        </tbody>
-                                    </table>
+                                    <div class="form-group">
+                                            <select class="productName form-control" name="productName[]" id="productName" multiple="multiple"></select>
+                                    </div>
                                 </div>
                             </div>
 
@@ -60,5 +49,29 @@
         </div>
     </div>
 
+    <script>
+        $( ".productName" ).select2({
+            ajax: {
+                url: "ajax/videosList",
+                dataType: 'json',
+                delay: 250,
+                data: function (params) {
+                    return {
+                        q: params.term // search term
+                    };
+                },
+                processResults: function (data) {
+                    // parse the results into the format expected by Select2.
+                    // since we are using custom formatting functions we do not need to
+                    // alter the remote JSON data
+                    return {
+                        results: data
+                    };
+                },
+                cache: true
+            },
+            minimumInputLength: 2
+        });
+    </script>
 @endsection
 

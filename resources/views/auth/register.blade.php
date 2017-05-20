@@ -24,16 +24,17 @@
                             </div>
                         </div>
 
-                        <div class="form-group{{ $errors->has('role') ? ' has-error' : '' }}">
-                            <label for="role" class="col-md-4 control-label">Pareigos</label>
+                        <div class="form-group{{ $errors->has('group') ? ' has-error' : '' }}">
+                            <label for="group" class="col-md-4 control-label">Grupė</label>
                             <div class="col-md-6">
-                                <select name="role" class="form-control">
-                                    <option value="0">Studentas</option>
-                                    <option value="1">Dėstytojas</option>
+                                <select name="group" class="form-control">
+                                    @foreach($groups as $group)
+                                    <option value="{{ $group->id }}">{{ $group->group }}</option>
+                                    @endforeach
                                 </select>
-                                @if ($errors->has('role'))
+                                @if ($errors->has('group'))
                                     <span class="help-block">
-                                        <strong>{{ $errors->first('role') }}</strong>
+                                        <strong>{{ $errors->first('group') }}</strong>
                                     </span>
                                 @endif
                             </div>
@@ -72,6 +73,20 @@
 
                             <div class="col-md-6">
                                 <input id="password-confirm" type="password" class="form-control" name="password_confirmation" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group{{ $errors->has('regkey') ? ' has-error' : '' }}">
+                            <label for="regkey" class="col-md-4 control-label">Raktas</label>
+
+                            <div class="col-md-6">
+                                <input id="regkey" type="text" class="form-control" name="regkey" value="{{ old('regkey') }}" required>
+
+                                @if ($errors->has('regkey'))
+                                    <span class="help-block">
+                                        <strong>{{ $errors->first('regkey') }}</strong>
+                                    </span>
+                                @endif
                             </div>
                         </div>
 

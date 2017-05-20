@@ -10,11 +10,11 @@
             <div class="col-xs-12 col-sm-9">
 
                 <div class="panel panel-default">
-                    <div class="panel-heading"><b>Privačių vaizdo įrašų teisės</b></div>
+                    <div class="panel-heading"><b>Privačių grojaraščių teisės</b></div>
                     <div class="panel-body">
 
                             <div class="form-group">
-                                <label for="title" class="col-lg-2 control-label">Jūsų privatūs vaizdo įrašai</label>
+                                <label for="title" class="col-lg-2 control-label">Jūsų privatūs grojaraščiai</label>
                                 <div class="col-lg-10">
                                     <table class="table table-bordered">
                                         <thead>
@@ -23,10 +23,10 @@
                                         </tr>
                                         </thead>
                                         <tbody>
-                                        @foreach ($videos as $video)
+                                        @foreach ($playlists as $playlist)
 
                                             <tr>
-                                                <td><a href="{{ url('videoPermissions2/' . $video['id']) }}">{{ $video['title'] }}</a></td>
+                                                <td><a href="{{ url('privatePlaylistPermissions2/' . $playlist['id']) }}">{{ $playlist['title'] }}</a></td>
 
                                                 </a>
                                             </tr>

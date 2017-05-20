@@ -12,7 +12,10 @@
                 <div class="panel panel-default">
                     <div class="panel-heading"><b>Grojaraščiai</b></div>
                     <div class="panel-body">
-
+                        <a href="{{ url('playlistList') }}" class="btn btn-primary btn-sm" role="button">Vieši</a>
+                        <a href="{{ url('privatePlaylistList') }}" class="btn btn-primary btn-sm" role="button">Privatūs</a>
+                        <br>
+                        <br>
                         <div class="list-group">
                                 @foreach($playlists as $key=>$playlist)
                                     @if ($videos[$key] > 0)

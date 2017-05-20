@@ -2,6 +2,13 @@
 
 @section('content')
 
+    <style>
+        .row.fix {
+            display: flex;
+            flex-wrap: wrap;
+        }
+        </style>
+
     <div class="container-fluid">
         <div class="row row-offcanvas row-offcanvas-left">
 
@@ -55,7 +62,10 @@
 
                         <div class="row">
                             @if (!empty($videos))
+                                <div class="row fix">
                             @foreach ($videos as $key => $video)
+
+
 
                                     <div class="col-lg-2 col-sm-3 col-xs-4">
                                         <div class="thumbnail">
@@ -66,17 +76,24 @@
                                                 <img src="http://img.youtube.com/vi/{{ $video['video_id'] }}/default.jpg" class="img-responsive">
                                                 @endif
                                                 <div class="caption">
+                                                    @if (strlen($video['title']) > 25)
+                                                    {{ substr($video['title'], 0, 25) . '...' }}
+                                                    @else
                                                     {{ $video['title'] }}
-                                                    @if (!empty($starCount))
-                                                    <br>
-                                                    <small>Patinka: {{ $starCount[$key] }}</small>
+                                                    @endif
+                                               @if (!empty($starCount))
+                                               <br>
+                                               <small>Patinka: {{ $starCount[$key] }}</small>
                                                     @endif
                                                 </div>
                                             </a>
                                         </div>
                                     </div>
 
+
+
                             @endforeach
+                                </div>
                             @endif
                         </div>
                     </div>
