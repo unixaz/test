@@ -450,20 +450,8 @@ foreach ($request['ch'] as $selectedVideo) {
 
     public function videoList()
     {
-        $allVideos = Video::all();
+        $videos = Video::where('privacy', 'public')->get();
 
-        foreach ($allVideos as $allVideo) {
-
-            if ($allVideo['privacy'] == 'public')
-            {
-                $videos[] = $allVideo;
-            }elseif ($allVideo['privacy'] == 'unlisted' && !Auth::guest()){
-                if (Permission::where('user_id', Auth::id())->where('video_id', $allVideo->id)->first()) {
-                    $videos[] = $allVideo;
-                }
-            }
-
-        }
         $useFilter = true;
         return view('videoList', compact('videos', 'useFilter'));
 
@@ -583,11 +571,14 @@ foreach ($request['ch'] as $selectedVideo) {
 
     public function videoPlaylist($id)
     {
-        if (Permission::where('playlist_id', $id)
-            ->where('group_id', Auth::user()->group)
-            ->first() || Permission::where('playlist_id', $id)
-                ->where('user_id', Auth::id())
-                ->first()) {
+
+
+        if (
+            Playlist::where('id', $id)->where('privacy', 'public')->first() ||
+            Permission::where('playlist_id', $id)->where('user_id', Auth::id())->first() ||
+            (Playlist::where('id', $id)->where('privacy', 'unlisted')->first() &&
+                Permission::where('playlist_id', $id)->where('group_id', Auth::user()->group)->first())
+        ) {
 
             $videosInPlaylists = VideosInPlaylist::where('playlist_id', $id)->get();
 
@@ -820,33 +811,20 @@ foreach ($request['ch'] as $selectedVideo) {
     public function professorsList2($id)
     {
         $professor = User::findOrFail($id);
-        $playlists = Playlist::where('user_id', $id)->get();
+        $playlists = Playlist::where('user_id', $id)->where('privacy', 'public')->get();
         ////
         $user_videos = Owner::with('videos')->where('name', Auth::id())->first();
-        $allVideos = [];
+        $videos = [];
         foreach($user_videos->videos as $video)
         {
-            $allVideos[] = $video;
+            if ($video->privacy == 'public')
+                $videos[] = $video;
         }
         ///
         $videosCount = array();
         foreach ($playlists as $playlist) {
             $videosCount[] = VideosInPlaylist::where('playlist_id', $playlist->id)
                 ->count();
-        }
-
-        $videos = array();
-        foreach ($allVideos as $allVideo) {
-
-            if ($allVideo['privacy'] == 'public')
-            {
-                $videos[] = $allVideo;
-            }elseif ($allVideo['privacy'] == 'unlisted' && !Auth::guest()){
-                if (Permission::where('user_id', Auth::id())->where('video_id', $allVideo->id)->first()) {
-                    $videos[] = $allVideo;
-                }
-            }
-
         }
 
         return view('professorsList2', compact('playlists','videosCount', 'videos', 'professor'));
@@ -1411,6 +1389,42 @@ foreach ($request['ch'] as $selectedVideo) {
 
         flash('Sėkmingai įvykdyta', 'success');
         return redirect('/groups');
+    }
+
+    public function deleteUsers()
+    {
+        $groups = Group::all();
+
+        return view('deleteUsers', compact('groups'));
+    }
+
+    public function deleteUsers2($id)
+    {
+        $users = User::where('group', $id)->where('role', '!=', 2)->get();
+
+        return view('deleteUsers2', compact('users','id'));
+    }
+
+    public function deleteUsers3(Request $request, $id)
+    {
+        $this->validate(
+            $request,
+            ['ch' => 'required'],
+            ['ch.required' => 'Nepasirinkti vartotojai']
+        );
+
+            foreach ($request['ch'] as $selectedVideo) {
+                $user = User::where('id', $selectedVideo)->first();
+                Comment::where('user_id', $user->id)->delete();
+                StarVideo::where('user_id', $user->id)->delete();
+                VideosInPlaylist::where('user_id', $user->id)->delete();
+                Playlist::where('user_id', $user->id)->delete();
+
+                $user->delete();
+            }
+
+            flash('Sėkmingai įvykdyta', 'success');
+            return redirect('/deleteUsers');
     }
 
 }

@@ -11,6 +11,9 @@
                     <a href="{{ url('writeNews') }}"><i class="fa fa-newspaper-o fa-fw"></i> Skelbti naujieną</a>
                 </li>
                 <li>
+                    <a href="{{ url('deleteUsers') }}"><i class="fa fa-trash fa-fw"></i> Šalinti vartotojus</a>
+                </li>
+                <li>
                     <a href="{{ url('groups') }}"><i class="fa fa-users fa-fw"></i> Grupių nustatymai</a>
                 </li>
 

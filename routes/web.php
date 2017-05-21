@@ -54,6 +54,10 @@ Route::group(['middleware' => ['admin']], function () {
 
     Route::get('/ajax/professorsList', 'ActionsController@getProfessorsList');
     Route::get('/ajax/videosList', 'ActionsController@getVideosList');
+
+    Route::get('/deleteUsers', 'ActionsController@deleteUsers');
+    Route::get('/deleteUsers2/{id}', 'ActionsController@deleteUsers2');
+    Route::post('/deleteUsers3/{id}', 'ActionsController@deleteUsers3');
 });
 
 Route::group(['middleware' => ['admin_professor']], function () {
