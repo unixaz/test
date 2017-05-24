@@ -14,7 +14,7 @@ class InfosTableSeeder extends Seeder
     public function run()
     {
         $faker = Faker::create();
-        foreach (range(1,5) as $index) {
+        foreach (range(1,20) as $index) {
             DB::table('infos')->insert([
                 'user_id' =>1,
                 'title' => $faker->catchPhrase,

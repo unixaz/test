@@ -31,6 +31,7 @@
                         <table class="table table-bordered">
                             <thead>
                                 <tr>
+                                    <th>ID</th>
                                     <th>Grupė</th>
                                     <th>Veiksmas</th>
                                 </tr>
@@ -39,8 +40,8 @@
                                 @foreach($groups as $group)
 
                                     <tr>
+                                        <td> {{ $group->id }}</td>
                                         <td> {{ $group->group }}</td>
-
                                         <td>
                                             <a href="{{ url('/deleteGroup',$group->id) }}" class="btn btn-danger btn-sm" role="button">Šalinti</a>
                                         </td>

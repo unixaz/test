@@ -58,6 +58,10 @@ Route::group(['middleware' => ['admin']], function () {
     Route::get('/deleteUsers', 'ActionsController@deleteUsers');
     Route::get('/deleteUsers2/{id}', 'ActionsController@deleteUsers2');
     Route::post('/deleteUsers3/{id}', 'ActionsController@deleteUsers3');
+
+    Route::get('/importUsers', 'ActionsController@importUsers');
+    Route::post('/importUsers2', 'ActionsController@importUsers2');
+    Route::post('/importUsers3', 'ActionsController@importUsers3');
 });
 
 Route::group(['middleware' => ['admin_professor']], function () {

@@ -16,6 +16,7 @@ use App\User;
 use App\Video;
 use App\Playlist;
 use App\VideosInPlaylist;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
@@ -1369,6 +1370,12 @@ foreach ($request['ch'] as $selectedVideo) {
 
     public function addGroup(Request $request)
     {
+        $this->validate(
+            $request,
+            ['group' => 'required'],
+            ['group.required' => 'Neįvesta grupė']
+        );
+
         Group::updateOrCreate(
             ['group' => $request->group]
         );
@@ -1425,6 +1432,104 @@ foreach ($request['ch'] as $selectedVideo) {
 
             flash('Sėkmingai įvykdyta', 'success');
             return redirect('/deleteUsers');
+    }
+
+    public function importUsers()
+    {
+
+        return view('importUsers');
+    }
+
+    public function importUsers2(Request $request)
+    {
+        $this->validate(
+            $request,
+            ['xml_file' => 'required'],
+            ['xml_file.required' => 'Nepasirinktas failas']
+        );
+
+        $xml_file_path = $request->file('xml_file')->store('xml_files');
+        if ($request->xml_file->getClientOriginalExtension() != 'xml')
+        {
+            flash('Įkeltas failas nėra xml failas', 'danger');
+            return redirect('/importUsers');
+        }
+
+        $full_xml_file_path = storage_path() . '/app/'. $xml_file_path;
+        $xml = simplexml_load_file($full_xml_file_path, "SimpleXMLElement", LIBXML_NOCDATA);
+        $json = json_encode($xml);
+        $array = json_decode($json,TRUE);
+
+        foreach ($array as $element)
+        {
+            foreach ($element as $element2) {
+
+                if (is_null($element2['vardas_pavarde']) ||
+                    is_null($element2['el_pastas']) ||
+                    is_null($element2['slaptazodis']) ||
+                    is_null($element2['pareigos']) ||
+                    is_null($element2['grupe']) ||
+                    User::where('email', $element2['el_pastas'])->exists()){
+                    continue;
+                }
+
+                $user = new User;
+
+                $user->name = $element2['vardas_pavarde'];
+                $user->email = $element2['el_pastas'];
+                $user->password = bcrypt($element2['slaptazodis']);
+                $user->role = $element2['pareigos'];
+                $user->group = $element2['grupe'];
+                $user->save();
+            }
+        }
+
+        Storage::delete($xml_file_path);
+
+        flash('Vartotojai sėkmingai įkelti', 'success');
+        return redirect('/importUsers');
+    }
+
+    public function importUsers3(Request $request)
+    {
+        $this->validate(
+            $request,
+            ['group_xml_file' => 'required'],
+            ['group_xml_file.required' => 'Nepasirinktas failas']
+        );
+
+        $xml_file_path = $request->file('group_xml_file')->store('xml_files');
+        if ($request->group_xml_file->getClientOriginalExtension() != 'xml')
+        {
+            flash('Įkeltas failas nėra xml failas', 'danger');
+            return redirect('/importUsers');
+        }
+
+        $full_xml_file_path = storage_path() . '/app/'. $xml_file_path;
+        $xml = simplexml_load_file($full_xml_file_path, "SimpleXMLElement", LIBXML_NOCDATA);
+        $json = json_encode($xml);
+        $array = json_decode($json,TRUE);
+
+        foreach ($array as $key => $element)
+        {
+            foreach ($element as $element2) {
+                if (Group::where('group', $element2)->exists() ||
+                    is_null($element2)
+                ) {
+                    continue;
+                }
+
+                $group = new Group;
+
+                $group->group = $element2;
+                $group->save();
+            }
+        }
+
+        Storage::delete($xml_file_path);
+
+        flash('Grupės sėkmingai įkeltos', 'success');
+        return redirect('/importUsers');
     }
 
 }
