@@ -10,7 +10,7 @@
             <div class="col-xs-12 col-sm-9">
 
                 <div class="panel panel-default">
-                    <div class="panel-heading"><b>Grupės pridėjimas</b></div>
+                    <div class="panel-heading"><b>Grupių administravimas</b></div>
                     <div class="panel-body">
 
                         @include('flash::message')

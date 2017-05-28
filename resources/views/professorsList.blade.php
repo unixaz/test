@@ -10,12 +10,11 @@
             <div class="col-xs-12 col-sm-9">
 
                 <div class="panel panel-default">
-                    <div class="panel-heading"><b>Dėstytojai</b></div>
+                    <div class="panel-heading"><b>Dėstytojų sąrašas</b></div>
                     <div class="panel-body">
 
                             <div class="form-group">
-                                <label for="title" class="col-lg-2 control-label">Dėstytojų sąrašas</label>
-                                <div class="col-lg-10">
+                                <div class="col-lg-12">
                                     <table class="table table-bordered">
                                         <thead>
                                         <tr>

@@ -89,21 +89,23 @@ class RegisterController extends Controller
         {
             //$confirmed = true;
             $role = 2;
+            $group = 0;
+        }else{
+            $regkey = Regkey::where('regkey', $data['regkey'])->first();
+            $role = $regkey->role_id;
+            if ($role == 0)
+            {
+                $group = 0;
+            }else{
+                $group = $data['group'];
+            }
         }
-           $regkey = Regkey::where('regkey', $data['regkey'])->first();
-
-if ($regkey->role_id == 0)
-{
-    $group = $data['group'];
-}else{
-    $group = 0;
-}
 
         return User::create([
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => bcrypt($data['password']),
-            'role' => $regkey->role_id,
+            'role' => $role,
             'group' => $group,
         ]);
     }

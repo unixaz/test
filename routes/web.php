@@ -99,9 +99,12 @@ Route::group(['middleware' => ['admin_professor']], function () {
 
     Route::get('/generateKey', 'ActionsController@generateKey');
     Route::get('/generateKey2', 'ActionsController@generateKey2');
+
+    Route::get('/studentsList', 'ActionsController@studentsList');
+    Route::get('/studentsList2/{id}', 'ActionsController@studentsList2');
 });
 
-Route::group(['middleware' => ['confirmed_user']], function () {
+Route::group(['middleware' => ['logged_in']], function () {
 
     Route::post('/addComment/{id}', 'ActionsController@addComment');
     Route::post('/starVideo', 'ActionsController@starVideo');

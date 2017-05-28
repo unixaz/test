@@ -80,7 +80,7 @@
                             <label for="regkey" class="col-md-4 control-label">Raktas</label>
 
                             <div class="col-md-6">
-                                <input id="regkey" type="text" class="form-control" name="regkey" value="{{ old('regkey') }}" required>
+                                <input id="regkey" type="text" class="form-control" name="regkey" value="{{ old('regkey') }}">
 
                                 @if ($errors->has('regkey'))
                                     <span class="help-block">

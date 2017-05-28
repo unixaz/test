@@ -76,8 +76,8 @@
                                                 <img src="http://img.youtube.com/vi/{{ $video['video_id'] }}/default.jpg" class="img-responsive">
                                                 @endif
                                                 <div class="caption">
-                                                    @if (strlen($video['title']) > 25)
-                                                    {{ substr($video['title'], 0, 25) . '...' }}
+                                                    @if (strlen($video['title']) > 30)
+                                                    {{ substr($video['title'], 0, 30) . '...' }}
                                                     @else
                                                     {{ $video['title'] }}
                                                     @endif

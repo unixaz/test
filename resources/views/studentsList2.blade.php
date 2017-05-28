@@ -10,14 +10,8 @@
             <div class="col-xs-12 col-sm-9">
 
                 <div class="panel panel-default">
-                    <div class="panel-heading"><b>Vartotojų šalinimas</b></div>
+                    <div class="panel-heading"><b>{{ $group['group'] }} studentų sąrašas</b></div>
                     <div class="panel-body">
-
-                        @include('flash::message')
-                        @include('errors')
-
-                    {!! Form::open(['url' => '/deleteUsers3/' . $id, 'class' => 'form-horizontal']) !!}
-                        <fieldset>
 
                             <div class="form-group">
                                 <div class="col-lg-12">
@@ -29,24 +23,18 @@
                                         </thead>
                                         <tbody>
                                         @foreach ($users as $user)
+
                                             <tr>
-                                                <td> {!! Form::checkbox('ch[]', $user['id'], false) !!} {!! Form::label($user['name']) !!}</td>
+                                                <td>{{ $user['name'] }}</td>
+                                                </a>
                                             </tr>
+
                                         @endforeach
                                         </tbody>
                                     </table>
                                 </div>
                             </div>
 
-                            <div class="form-group">
-                                <div class="col-lg-10 ">
-                                    <button type="reset" class="btn btn-default">Išvalyti formą</button>
-                                    <button type="submit" class="btn btn-primary">Šalinti</button>
-                                </div>
-                            </div>
-
-                        </fieldset>
-                    {!! Form::close()  !!}
 
                     </div>
                 </div>

@@ -10,7 +10,7 @@
             <div class="col-xs-12 col-sm-9">
 
                 <div class="panel panel-default">
-                    <div class="panel-heading"><b>Šalinti vartotojus</b></div>
+                    <div class="panel-heading"><b>Vartotojų šalinimas</b></div>
                     <div class="panel-body">
 
                         <label for="playlist" class="col-lg-2 control-label">Grupės</label>

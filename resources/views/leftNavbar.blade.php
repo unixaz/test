@@ -21,7 +21,7 @@
                         </a>
                         <ul class="dropdown-menu">
                             <li>
-                                <a href="{{ url('importUsers') }}">Importuoti vartotojus</a>
+                                <a href="{{ url('importUsers') }}">Importuoti vartotojus/grupes</a>
                             </li>
                             <li>
                                 <a href="{{ url('deleteUsers') }}">Šalinti vartotojus</a>
@@ -56,7 +56,10 @@
                 @if (Auth::user()->isAdminOrProfessor())
 
                     <li>
-                        <a href="{{ url('generateKey') }}"><i class="fa fa-key fa-fw"></i> Generuoti raktą</a>
+                        <a href="{{ url('generateKey') }}"><i class="fa fa-key fa-fw"></i> Registracijos raktas</a>
+                    </li>
+                    <li>
+                        <a href="{{ url('studentsList') }}"><i class="fa fa-list-ol fa-fw"></i> Studentų sąrašas</a>
                     </li>
                     <li>
                         <a href="{{ url('myVideos') }}"><i class="fa fa-youtube-play fa-fw"></i> Mano vaizdo įrašai</a>

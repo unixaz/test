@@ -163,9 +163,10 @@ class ActionsController extends Controller
     {
         $user_videos = Owner::with('videos')->where('name', Auth::id())->first();
         $videos = [];
-        foreach($user_videos->videos as $video)
-        {
-            $videos[] = $video;
+        if ($user_videos) {
+            foreach ($user_videos->videos as $video) {
+                $videos[] = $video;
+            }
         }
         $useFilter = true;
         return view('videoList', compact('videos', 'useFilter'));
@@ -503,16 +504,21 @@ foreach ($request['ch'] as $selectedVideo) {
         $count = StarVideo::where(['video_id' => $id])->count();
         $comments = Comment::with('users')->where('video_id', $id)->get();
 
-        $video_playlists = VideosInPlaylist::where('video_id', $id)->get();
-
         $permissionToWatch = false;
+
+        $video_owners = Video::with('owners')->where('id', $id)->first();
+        foreach ($video_owners->owners as $video_owner)
+        {
+            if ($video_owner->name == Auth::id())
+            {
+                $permissionToWatch = true;
+            }
+        }
+
+        $video_playlists = VideosInPlaylist::where('video_id', $id)->get();
         foreach ($video_playlists as $video_playlist)
         {
             if (Permission::where('playlist_id', $video_playlist->playlist_id)->where('group_id', Auth::user()->group)->first())
-            {
-                $permissionToWatch = true;
-                break;
-            }elseif (Permission::where('playlist_id', $video_playlist->playlist_id)->where('user_id', Auth::id())->first())
             {
                 $permissionToWatch = true;
                 break;
@@ -803,7 +809,7 @@ foreach ($request['ch'] as $selectedVideo) {
 
     public function professorsList()
     {
-        $professors = User::where('role', [1,2])
+        $professors = User::whereIn('role', [1,2])
             ->get();
         return view('professorsList', compact('professors'));
 
@@ -814,12 +820,13 @@ foreach ($request['ch'] as $selectedVideo) {
         $professor = User::findOrFail($id);
         $playlists = Playlist::where('user_id', $id)->where('privacy', 'public')->get();
         ////
-        $user_videos = Owner::with('videos')->where('name', Auth::id())->first();
+        $user_videos = Owner::with('videos')->where('name', $id)->first();
         $videos = [];
-        foreach($user_videos->videos as $video)
-        {
-            if ($video->privacy == 'public')
-                $videos[] = $video;
+        if ($user_videos) {
+            foreach ($user_videos->videos as $video) {
+                if ($video->privacy == 'public')
+                    $videos[] = $video;
+            }
         }
         ///
         $videosCount = array();
@@ -1268,16 +1275,22 @@ foreach ($request['ch'] as $selectedVideo) {
     public function watchPrivate($filename)
     {
         $video = Video::where('video_id', $filename)->first();
-        $video_playlists = VideosInPlaylist::where('video_id', $video->id)->get();
 
         $permissionToWatch = false;
+
+        $video_owners = Video::with('owners')->where('id', $video->id)->first();
+        foreach ($video_owners->owners as $video_owner)
+        {
+            if ($video_owner->name == Auth::id())
+            {
+                $permissionToWatch = true;
+            }
+        }
+
+        $video_playlists = VideosInPlaylist::where('video_id', $video->id)->get();
         foreach ($video_playlists as $video_playlist)
         {
             if (Permission::where('playlist_id', $video_playlist->playlist_id)->where('group_id', Auth::user()->group)->first())
-            {
-                $permissionToWatch = true;
-                break;
-            }elseif (Permission::where('playlist_id', $video_playlist->playlist_id)->where('user_id', Auth::id())->first())
             {
                 $permissionToWatch = true;
                 break;
@@ -1290,7 +1303,7 @@ foreach ($request['ch'] as $selectedVideo) {
                 $stream->start();
             });
         }else {
-            return redirect('/aa');
+            return redirect('/');
         }
     }
 
@@ -1530,6 +1543,22 @@ foreach ($request['ch'] as $selectedVideo) {
 
         flash('Grupės sėkmingai įkeltos', 'success');
         return redirect('/importUsers');
+    }
+
+    public function studentsList()
+    {
+        $groups = Group::all();
+        return view('studentsList', compact('groups'));
+
+    }
+
+    public function studentsList2($id)
+    {
+        $group = Group::findOrFail($id);
+        $users = User::where('group', $group->id)->get();
+
+        return view('studentsList2', compact('users', 'group'));
+
     }
 
 }

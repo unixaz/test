@@ -1,7 +1,6 @@
 @extends('layouts.app')
 
 @section('content')
-
     <div class="container-fluid">
         <div class="row row-offcanvas row-offcanvas-left">
 
@@ -14,7 +13,7 @@
                     <div class="panel-body">
                         @if (strpos($videos['video_id'], "."))
                             <video class="center-block" width="45%" height="315" controls controlsList="nodownload">
-                                <source src="{{ route('watchPrivate', $videos['video_id'])  }}" type="video/mp4">
+                                <source src="{{ route('watchPrivate', $videos['video_id'])  }}" type="video/webm">
                                 Jūsų naršyklė nepalaiko vaizdo įrašų žymės.
                             </video>
                         @else
@@ -106,12 +105,14 @@
                                         <br>
                                     <small>{!! $comment->created_at !!}</small>
 
+                                    @if (Auth::user()->role == 2)
                                     {!! Form::open(['url' => '/deleteComment/' . $comment->id, 'class' => 'form-horizontal']) !!}
                                     <label class="radio-inline">
                                         <input type="radio" name="optionsRadios" value="delete"> Šalinti
                                     </label>
                                     <button type="submit" class="btn btn-link btn-xs">Atlikti veiksmą</button>
                                     {!! Form::close()  !!}
+                                    @endif
 
                                     @foreach ($comment->users as $user)
                                         <span class="pull-right text-muted small"><em>{!! $user->name !!} </em></span>
