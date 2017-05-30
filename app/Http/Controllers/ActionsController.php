@@ -473,24 +473,27 @@ foreach ($request['ch'] as $selectedVideo) {
     }
     public function privatePlaylistList()
     {
-        $permissions = Permission::where('group_id', Auth::user()->group)
-            ->get();
+        if (Auth::user()) {
+            $permissions = Permission::where('group_id', Auth::user()->group)
+                ->get();
 
-        $playlists = array();
-        foreach ($permissions as $permission) {
-            $playlists[] = Playlist::where('id', $permission->playlist_id)->first();
-        }
+            $playlists = array();
+            foreach ($permissions as $permission) {
+                $playlists[] = Playlist::where('id', $permission->playlist_id)->first();
+            }
 
-        $my_privates = Permission::where('user_id', Auth::id())
-            ->get();
-        foreach ($my_privates as $my_private) {
-            $playlists[] = Playlist::where('id', $my_private->playlist_id)->first();
-        }
+            $my_privates = Playlist::where('user_id', Auth::id())->where('privacy', 'unlisted')->get();
+            foreach ($my_privates as $my_private) {
+                $playlists[] = $my_private;
+            }
 
-        $videos = array();
-        foreach ($playlists as $playlist) {
-            $videos[] = VideosInPlaylist::where('playlist_id', $playlist->id)
-                ->count();
+            $videos = array();
+            foreach ($playlists as $playlist) {
+                $videos[] = VideosInPlaylist::where('playlist_id', $playlist->id)
+                    ->count();
+            }
+        }else{
+            $playlists = array();
         }
 
         return view('playlistList', compact('playlists','videos'));
@@ -499,35 +502,38 @@ foreach ($request['ch'] as $selectedVideo) {
 
     public function watchVideo($id)
     {
+        $star = null;
         $videos = Video::with('tags')->where('id', $id)->first();
-        $star = StarVideo::where('user_id', Auth::id())->where('video_id', $id)->first();
         $count = StarVideo::where(['video_id' => $id])->count();
         $comments = Comment::with('users')->where('video_id', $id)->get();
 
         $permissionToWatch = false;
 
-        $video_owners = Video::with('owners')->where('id', $id)->first();
-        foreach ($video_owners->owners as $video_owner)
-        {
-            if ($video_owner->name == Auth::id())
-            {
-                $permissionToWatch = true;
-            }
-        }
-
-        $video_playlists = VideosInPlaylist::where('video_id', $id)->get();
-        foreach ($video_playlists as $video_playlist)
-        {
-            if (Permission::where('playlist_id', $video_playlist->playlist_id)->where('group_id', Auth::user()->group)->first())
-            {
-                $permissionToWatch = true;
-                break;
-            }
-        }
-
         if ($videos->privacy == 'public') {
             return view('watchVideo', compact('videos', 'comments', 'star', 'count'));
         }elseif ($videos->privacy == 'unlisted'){
+
+            $star = StarVideo::where('user_id', Auth::id())->where('video_id', $id)->first();
+
+            $video_owners = Video::with('owners')->where('id', $id)->first();
+            foreach ($video_owners->owners as $video_owner)
+            {
+                if ($video_owner->name == Auth::id())
+                {
+                    $permissionToWatch = true;
+                }
+            }
+
+            $video_playlists = VideosInPlaylist::where('video_id', $id)->get();
+            foreach ($video_playlists as $video_playlist)
+            {
+                if (Permission::where('playlist_id', $video_playlist->playlist_id)->where('group_id', Auth::user()->group)->first())
+                {
+                    $permissionToWatch = true;
+                    break;
+                }
+            }
+
             if ($permissionToWatch)
             {
                 return view('watchVideo', compact('videos', 'comments', 'star', 'count'));

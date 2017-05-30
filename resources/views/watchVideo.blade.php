@@ -95,8 +95,6 @@
                         {!! Form::close()  !!}
                         @endif
 
-
-
                         @foreach($comments as $comment)
 
                                 <div class="list-group-item">
@@ -105,6 +103,7 @@
                                         <br>
                                     <small>{!! $comment->created_at !!}</small>
 
+                                    @if (Auth::user())
                                     @if (Auth::user()->role == 2)
                                     {!! Form::open(['url' => '/deleteComment/' . $comment->id, 'class' => 'form-horizontal']) !!}
                                     <label class="radio-inline">
@@ -112,6 +111,7 @@
                                     </label>
                                     <button type="submit" class="btn btn-link btn-xs">Atlikti veiksmą</button>
                                     {!! Form::close()  !!}
+                                    @endif
                                     @endif
 
                                     @foreach ($comment->users as $user)
